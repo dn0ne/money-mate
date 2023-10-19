@@ -7,8 +7,17 @@ plugins {
     id("io.realm.kotlin") version "1.11.0"
 }
 
+val mokoResourcesVersion = extra["moko.resources.version"] as String
+val mokoMvvmVersion = extra["moko.mvvm.version"] as String
+
 kotlin {
     android()
+
+    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+        binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework::class.java) {
+            export("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+        }
+    }
 
     iosX64()
     iosArm64()
@@ -29,9 +38,6 @@ kotlin {
     }
 
     sourceSets {
-        val mokoResourcesVersion = extra["moko.resources.version"] as String
-        val mokoMvvmVersion = extra["moko.mvvm.version"] as String
-
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
@@ -95,4 +101,11 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+
+dependencies {
+    commonMainApi("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-compose:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-flow:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-flow-compose:$mokoMvvmVersion")
 }
