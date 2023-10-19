@@ -1,4 +1,4 @@
-package com.myapplication
+package com.dn0ne.moneymate
 
 import MainView
 import android.os.Bundle

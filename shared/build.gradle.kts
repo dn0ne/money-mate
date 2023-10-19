@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("io.realm.kotlin") version "1.11.0"
 }
 
 kotlin {
@@ -30,40 +31,33 @@ kotlin {
     sourceSets {
         val mokoResourcesVersion = extra["moko.resources.version"] as String
         val mokoMvvmVersion = extra["moko.mvvm.version"] as String
-        val mokoPermissionsVersion = extra["moko.permissions.version"] as String
-        val mokoMediaVersion = extra["moko.media.version"] as String
-        val mokoBiometryVersion = extra["moko.biometry.version"] as String
-        val mokoGeoVersion = extra["moko.geo.version"] as String
 
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
+                // MOKO
                 implementation("dev.icerock.moko:resources-compose:$mokoResourcesVersion")
-
                 implementation("dev.icerock.moko:mvvm-compose:$mokoMvvmVersion")
 
-                implementation("dev.icerock.moko:permissions-compose:$mokoPermissionsVersion")
+                // Realm
+                implementation("io.realm.kotlin:library-base:1.11.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-                implementation("dev.icerock.moko:media-compose:$mokoMediaVersion")
-
-                implementation("dev.icerock.moko:biometry-compose:$mokoBiometryVersion")
-
-                implementation("dev.icerock.moko:geo-compose:$mokoGeoVersion")
-
-                // fix of Could not find "shared/build/kotlinTransformedMetadataLibraries/commonMain/org.jetbrains.kotlinx-atomicfu-0.17.3-nativeInterop-8G5yng.klib"
-                implementation("org.jetbrains.kotlinx:atomicfu:0.17.3")
+                // KotlinX DateTime
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
             }
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.activity:activity-compose:1.6.1")
+                api("androidx.activity:activity-compose:1.8.0")
                 api("androidx.appcompat:appcompat:1.6.1")
-                api("androidx.core:core-ktx:1.9.0")
+                api("androidx.core:core-ktx:1.12.0")
             }
         }
         val iosX64Main by getting
@@ -79,12 +73,12 @@ kotlin {
 }
 
 multiplatformResources {
-    multiplatformResourcesPackage = "com.myapplication.common"
+    multiplatformResourcesPackage = "com.dn0ne.moneymate"
 }
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "com.dn0ne.moneymate"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -93,13 +87,12 @@ android {
 
     defaultConfig {
         minSdk = (findProperty("android.minSdk") as String).toInt()
-        targetSdk = (findProperty("android.targetSdk") as String).toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 }
