@@ -4,7 +4,6 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
-    id("io.realm.kotlin") version "1.11.0"
 }
 
 val mokoResourcesVersion = extra["moko.resources.version"] as String
