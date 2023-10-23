@@ -11,7 +11,7 @@ val mokoResourcesVersion = extra["moko.resources.version"] as String
 val mokoMvvmVersion = extra["moko.mvvm.version"] as String
 
 kotlin {
-    android()
+    androidTarget()
 
     targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
         binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework::class.java) {
