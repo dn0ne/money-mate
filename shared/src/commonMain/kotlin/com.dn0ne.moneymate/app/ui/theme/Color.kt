@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.theme
+package com.dn0ne.moneymate.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
