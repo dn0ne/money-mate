@@ -4,6 +4,15 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("io.realm.kotlin") version "1.11.1"
+}
+
+project.afterEvaluate {
+    kotlin.targets.all {
+        compilations.all {
+            (kotlinOptions as? org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions)?.jvmTarget = "17"
+        }
+    }
 }
 
 val mokoResourcesVersion = extra["moko.resources.version"] as String
