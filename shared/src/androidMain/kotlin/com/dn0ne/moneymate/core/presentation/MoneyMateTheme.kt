@@ -10,9 +10,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.dn0ne.moneymate.app.theme.DarkColorScheme
-import com.dn0ne.moneymate.app.theme.LightColorScheme
-import com.dn0ne.moneymate.app.theme.Typography
+import com.dn0ne.moneymate.app.ui.theme.DarkColorScheme
+import com.dn0ne.moneymate.app.ui.theme.LightColorScheme
 
 @Composable
 actual fun MoneyMateTheme(
@@ -41,7 +40,6 @@ actual fun MoneyMateTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
         content = content
     )
 }
