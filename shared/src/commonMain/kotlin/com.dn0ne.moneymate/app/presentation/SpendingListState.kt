@@ -1,6 +1,7 @@
 package com.dn0ne.moneymate.app.presentation
 
 import com.dn0ne.moneymate.app.domain.Category
+import com.dn0ne.moneymate.app.domain.ShoppingItem
 import com.dn0ne.moneymate.app.domain.Spending
 
 data class SpendingListState(
@@ -14,5 +15,5 @@ data class SpendingListState(
     val categoryError: String? = null,
     val amountError: String? = null,
     val shortDescriptionError: String? = null,
-    val shoppingListError: String? = null
+    val shoppingListError: Map<ShoppingItem, Pair<Boolean, Boolean>>? = null
 )

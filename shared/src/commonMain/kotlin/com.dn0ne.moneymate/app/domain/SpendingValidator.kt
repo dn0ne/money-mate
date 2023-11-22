@@ -12,14 +12,9 @@ object SpendingValidator {
         }
 
         if (spending.shoppingList.isNotEmpty()) {
-            for (item in spending.shoppingList) {
-                if (item.name.isBlank() || item.price == 0f) {
-                    result = result.copy(
-                        shoppingListError = "All shopping list fields must be filled"
-                    )
-                    break
-                }
-            }
+            result = result.copy(
+                shoppingListError = checkShoppingList(spending.shoppingList)
+            )
         }
 
         if (spending.amount == 0f) {
@@ -40,10 +35,20 @@ object SpendingValidator {
         return result
     }
 
+    private fun checkShoppingList(shoppingList: List<ShoppingItem>): Map<ShoppingItem, Pair<Boolean, Boolean>>? {
+        val errors = shoppingList
+            .filter { item ->
+                item.name.isBlank() || item.price == 0f
+            }.associateWith { item ->
+                Pair(item.name.isBlank(), item.price == 0f)
+            }
+        return errors.ifEmpty { null }
+    }
+
     data class ValidationResult(
         val categoryError: String? = null,
         val amountError: String? = null,
         val shortDescriptionError: String? = null,
-        val shoppingListError: String? = null
+        val shoppingListError: Map<ShoppingItem, Pair<Boolean, Boolean>>? = null
     )
 }

@@ -25,8 +25,7 @@ fun ShoppingListItem(
     item: ShoppingItem,
     onItemNameChanged: (String) -> Unit,
     onItemPriceChanged: (Float) -> Unit,
-    itemNameError: String? = null,
-    itemPriceError: String? = null,
+    itemError: Pair<Boolean, Boolean>? = null,
     deletable: Boolean = true,
     onDeleteButtonClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -41,7 +40,7 @@ fun ShoppingListItem(
                 name = it
                 onItemNameChanged(name)
             },
-            error = itemNameError,
+            error = if (itemError?.first == true) "Fill this" else null,
             placeholder = "Name",
             keyboardType = KeyboardType.Text,
             modifier = Modifier.weight(1f)
@@ -61,8 +60,8 @@ fun ShoppingListItem(
                 price = it
                 onItemPriceChanged(price.toFloatOrNull() ?: 0f)
             },
-            error = itemPriceError,
             placeholder = "Price",
+            error = if (itemError?.second == true) "Fill this" else null,
             keyboardType = KeyboardType.Number,
             modifier = Modifier.weight(
                 if (deletable) 0.7f else 1f
