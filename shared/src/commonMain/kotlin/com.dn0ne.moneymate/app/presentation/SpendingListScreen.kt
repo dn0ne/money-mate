@@ -1,5 +1,6 @@
 package com.dn0ne.moneymate.app.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,10 +40,10 @@ fun SpendingListScreen(
                 expanded = !listState.canScrollBackward,
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
             )
-        }
+        },
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface),
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             state = listState
