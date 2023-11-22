@@ -31,11 +31,11 @@ actual fun MoneyMateTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         val window = (view.context as Activity).window
-        window.statusBarColor = colorScheme.primary.toArgb()
+        window.statusBarColor = colorScheme.surface.toArgb()
         WindowCompat.getInsetsController(
             window,
             view
-        ).isAppearanceLightStatusBars = darkTheme
+        ).isAppearanceLightStatusBars = !darkTheme
     }
 
     MaterialTheme(
