@@ -4,15 +4,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
-    id("io.realm.kotlin") version "1.11.1"
-}
-
-project.afterEvaluate {
-    kotlin.targets.all {
-        compilations.all {
-            (kotlinOptions as? org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions)?.jvmTarget = "17"
-        }
-    }
+    id("io.realm.kotlin") version "1.12.0"
 }
 
 val mokoResourcesVersion = extra["moko.resources.version"] as String
@@ -60,7 +52,7 @@ kotlin {
                 implementation("dev.icerock.moko:mvvm-compose:$mokoMvvmVersion")
 
                 // Realm
-                implementation("io.realm.kotlin:library-base:1.11.1")
+                implementation("io.realm.kotlin:library-base:1.12.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
                 // KotlinX DateTime
@@ -70,7 +62,7 @@ kotlin {
         val androidMain by getting {
             dependsOn(commonMain)
             dependencies {
-                api("androidx.activity:activity-compose:1.8.0")
+                api("androidx.activity:activity-compose:1.8.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.12.0")
             }
