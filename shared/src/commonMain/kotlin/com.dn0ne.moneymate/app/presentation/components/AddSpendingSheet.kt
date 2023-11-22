@@ -10,8 +10,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +28,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBackIos
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,7 +37,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -55,6 +57,7 @@ import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun AddSpendingSheet(
@@ -67,47 +70,72 @@ fun AddSpendingSheet(
     SimpleBottomSheet(
         visible = isOpen,
         modifier = modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         //-------------------------------------------------------------------------------
         //  Top Bar
         //-------------------------------------------------------------------------------
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-                ).padding(8.dp)
-        ) {
-            IconButton(
-                onClick = {
-                    onEvent(SpendingListEvent.DismissSpending)
-                },
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Close add spending sheet",
-                )
-            }
-
-            Text(
-                text = "Spend",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.align(Alignment.Center)
-            )
+        var isTopBarCollapsed by remember {
+            mutableStateOf(false)
         }
-
+        CollapsingTopAppBar(
+            isCollapsed = isTopBarCollapsed,
+            title = {
+                Text(text = "Spend", style = MaterialTheme.typography.headlineMedium)
+            },
+            collapsedTitle = {
+                Text("Spend", style = MaterialTheme.typography.titleMedium)
+            },
+            leadingButton = {
+                IconButton(
+                    onClick = {
+                        onEvent(SpendingListEvent.DismissSpending)
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.ArrowBackIos,
+                        contentDescription = "Close add spending sheet",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        )
         //-------------------------------------------------------------------------------
         //  Content
         //-------------------------------------------------------------------------------
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberScrollState()
+        var areDetailsAdded by remember {
+            mutableStateOf(state.areSpendingDetailsAdded)
+        }
+        var detailsType by remember {
+            mutableStateOf(state.detailsType)
+        }
+        var isScrollingUp by remember {
+            mutableStateOf(true)
+        }
+
+        val scrollableState = rememberScrollableState {
+            if (it.roundToInt() > 5) {
+                isScrollingUp = true
+            } else if (it.roundToInt() < -5 || scrollState.canScrollBackward) {
+                isScrollingUp = false
+            }
+            it
+        }
+
+        if (!scrollState.canScrollBackward && isScrollingUp) {
+            isTopBarCollapsed = false
+        } else if (!isScrollingUp) {
+            isTopBarCollapsed = true
+        }
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .scrollable(scrollableState, Orientation.Vertical)
                 .verticalScroll(scrollState)
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //-------------------------------------------------------------------------------
@@ -129,12 +157,6 @@ fun AddSpendingSheet(
             //-------------------------------------------------------------------------------
             //  Details Section
             //-------------------------------------------------------------------------------
-            var areDetailsAdded by remember {
-                mutableStateOf(state.areSpendingDetailsAdded)
-            }
-            var detailsType by remember {
-                mutableStateOf(state.detailsType)
-            }
             AnimatedVisibility(
                 visible = areDetailsAdded,
                 modifier = Modifier.fillMaxWidth(),
@@ -179,15 +201,15 @@ fun AddSpendingSheet(
                             (fadeIn() + expandVertically()).togetherWith(fadeOut() + shrinkVertically())
                         }
                     ) { targetContent ->
-                        when (targetContent) {
-                            0 -> {
-                                //-------------------------------------------------------------------
-                                //  Short Description Text Field
-                                //-------------------------------------------------------------------
-                                var description by remember {
-                                    mutableStateOf(newSpending?.shortDescription ?: "")
-                                }
-                                Column(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            when (targetContent) {
+                                0 -> {
+                                    //-------------------------------------------------------------------
+                                    //  Short Description Text Field
+                                    //-------------------------------------------------------------------
+                                    var description by remember {
+                                        mutableStateOf(newSpending?.shortDescription ?: "")
+                                    }
                                     SpendingTextField(
                                         value = description,
                                         onValueChanged = {
@@ -204,13 +226,11 @@ fun AddSpendingSheet(
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
-                            }
 
-                            1 -> {
-                                //-------------------------------------------------------------------
-                                //  Shopping List
-                                //-------------------------------------------------------------------
-                                Column(modifier = Modifier.fillMaxWidth()) {
+                                1 -> {
+                                    //-------------------------------------------------------------------
+                                    //  Shopping List
+                                    //-------------------------------------------------------------------
                                     //---------------------------------------------------------------
                                     //  List Titles
                                     //---------------------------------------------------------------
@@ -224,6 +244,8 @@ fun AddSpendingSheet(
                                             }
                                         } ?: mutableStateListOf(ShoppingItem())
                                     }
+
+
                                     //---------------------------------------------------------------
                                     //  Initial Shopping List Item
                                     //---------------------------------------------------------------
@@ -252,6 +274,7 @@ fun AddSpendingSheet(
                                                 )
                                             )
                                         },
+                                        itemError = state.shoppingListError?.get(shoppingList[0]),
                                         deletable = false,
                                         modifier = Modifier.fillMaxWidth()
                                     )
@@ -298,6 +321,7 @@ fun AddSpendingSheet(
                                                                 )
                                                             )
                                                         },
+                                                        itemError = state.shoppingListError?.get(item),
                                                         onDeleteButtonClick = {
                                                             coroutineScope.launch {
                                                                 visibleState.targetState = false
@@ -330,6 +354,7 @@ fun AddSpendingSheet(
                                                 )
                                             )
                                             coroutineScope.launch {
+                                                isScrollingUp = false
                                                 delay(300) // Animation delay
                                                 scrollState.animateScrollTo(
                                                     value = scrollState.maxValue,
