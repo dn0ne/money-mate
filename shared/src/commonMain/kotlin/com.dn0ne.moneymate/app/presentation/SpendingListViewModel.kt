@@ -31,6 +31,15 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
     var newSpending: Spending? by mutableStateOf(null)
         private set
 
+    init {
+        viewModelScope.launch {
+            delay(5000)
+            if (state.value.categories.isEmpty()) {
+                insertInitialCategories()
+            }
+        }
+    }
+
     fun onEvent(event: SpendingListEvent) {
         when (event) {
             SpendingListEvent.DeleteSpending -> {
