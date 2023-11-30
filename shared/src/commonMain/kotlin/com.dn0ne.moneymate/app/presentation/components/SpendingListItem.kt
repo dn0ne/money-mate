@@ -61,7 +61,7 @@ fun SpendingListItem(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.CenterEnd
         ) {
-            val amount: String = spending.amount.toStringWithScale(2)
+            val amount = spending.amount.toStringWithScale(2)
 
             Text(
                 text = buildAnnotatedString {
