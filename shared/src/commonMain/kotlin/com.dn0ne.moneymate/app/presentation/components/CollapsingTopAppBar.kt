@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +29,7 @@ fun CollapsingTopAppBar(
     isCollapsed: Boolean,
     title: @Composable () -> Unit,
     collapsedTitle: @Composable () -> Unit,
-    leadingButton: @Composable () -> Unit,
+    leadingButton: (@Composable () -> Unit)? = null,
     trailingButtons: (@Composable RowScope.() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -40,8 +41,10 @@ fun CollapsingTopAppBar(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Box(modifier = Modifier.align(Alignment.BottomStart)) {
-            leadingButton()
+        leadingButton?.let {
+            Box(modifier = Modifier.align(Alignment.BottomStart)) {
+                it()
+            }
         }
 
         AnimatedVisibility(
@@ -86,18 +89,20 @@ fun CollapsingTopAppBar(
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxHeight(.3f)
             ) {
+                Spacer(modifier = Modifier.height(30.dp))
                 title()
             }
         }
 
-        if (trailingButtons != null) {
+        trailingButtons?.let {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.align(Alignment.BottomEnd)
             ) {
-                trailingButtons()
+                it()
             }
         }
     }
