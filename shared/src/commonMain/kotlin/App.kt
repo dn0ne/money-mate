@@ -31,7 +31,7 @@ fun App(
         val state by viewModel.state.collectAsState()
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.surface
         )
         {
             SpendingListScreen(
