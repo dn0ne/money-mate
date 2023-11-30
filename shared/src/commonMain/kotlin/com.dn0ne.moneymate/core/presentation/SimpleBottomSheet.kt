@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
@@ -27,7 +28,7 @@ fun SimpleBottomSheet(
         )
     ) {
         Column(
-            modifier = modifier
+            modifier = modifier.clickable(enabled = false, onClick = {})
         ) {
             content()
         }
