@@ -91,12 +91,12 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
             is SpendingListEvent.EditSpending -> {
                 _state.update {
                     it.copy(
-                        selectedSpending = null,
+                        isSelectedSpendingSheetOpen = false,
                         isAddSpendingSheetOpen = true,
-                        isSelectedSpendingSheetOpen = false
+                        areSpendingDetailsAdded = event.spending.shortDescription != null || event.spending.shoppingList.isNotEmpty(),
+                        detailsType = if (event.spending.shoppingList.isNotEmpty()) 1 else 0
                     )
                 }
-
                 newSpending = event.spending
             }
 
@@ -194,7 +194,11 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
                         }
 
                         viewModelScope.launch {
-                            dataSource.insertSpending(spending)
+                            if (state.value.spendings.any { it.id == spending.id }) {
+                                dataSource.updateSpending(spending)
+                            } else {
+                                dataSource.insertSpending(spending)
+                            }
                             delay(300L) // Animation delay
                             newSpending = null
                         }
@@ -210,6 +214,7 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
                     }
                 }
             }
+
             is SpendingListEvent.SelectSpending -> {
                 _state.update {
                     it.copy(
