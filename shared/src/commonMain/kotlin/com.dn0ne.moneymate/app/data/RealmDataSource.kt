@@ -42,9 +42,11 @@ class RealmDataSource(private val realm: Realm) : DataSource {
 
     override suspend fun updateSpending(spending: Spending) {
         realm.write {
-            val queriedSpending =
-                realm.query<Spending>(query = "_id == $0", spending.id).first().find()
-            queriedSpending?.category = spending.category
+            val queriedSpending = findLatest(
+                realm.query<Spending>(query = "id == $0", spending.id).first().find()!!
+            )
+
+            queriedSpending?.category = findLatest(spending.category!!)
             queriedSpending?.amount = spending.amount
             queriedSpending?.shortDescription = spending.shortDescription
             queriedSpending?.shoppingList = spending.shoppingList
@@ -53,7 +55,7 @@ class RealmDataSource(private val realm: Realm) : DataSource {
 
     override suspend fun deleteSpending(id: ObjectId) {
         realm.write {
-            val queriedSpending = query<Spending>(query = "_id == $0", id).first().find()
+            val queriedSpending = query<Spending>(query = "id == $0", id).first().find()
             try {
                 queriedSpending?.let { delete(it) }
             } catch (e: IllegalArgumentException) {
