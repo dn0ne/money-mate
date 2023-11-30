@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +55,7 @@ import com.dn0ne.moneymate.app.domain.Spending
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
+import com.dn0ne.moneymate.util.DecimalFormatter
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -242,7 +244,7 @@ fun AddSpendingSheet(
                                             if (isEmpty()) {
                                                 add(ShoppingItem())
                                             }
-                                        } ?: mutableStateListOf(ShoppingItem())
+                                        }?.toMutableStateList() ?: mutableStateListOf(ShoppingItem())
                                     }
 
 
@@ -367,7 +369,8 @@ fun AddSpendingSheet(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.Add,
-                                            contentDescription = null
+                                            contentDescription = null,
+                                            modifier = Modifier.size(22.dp)
                                         )
                                         Text("Add item")
                                     }
@@ -400,7 +403,7 @@ fun AddSpendingSheet(
                     placeholder = "Enter amount",
                     error = state.amountError,
                     onValueChanged = {
-                        amount = it
+                        amount = DecimalFormatter.cleanup(it)
                         onEvent(SpendingListEvent.OnAmountChanged(amount.toFloatOrNull() ?: 0f))
                     },
                     keyboardType = KeyboardType.Number,
