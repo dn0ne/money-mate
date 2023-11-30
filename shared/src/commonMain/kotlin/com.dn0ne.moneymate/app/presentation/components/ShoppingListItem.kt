@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.app.domain.ShoppingItem
+import com.dn0ne.moneymate.util.DecimalFormatter
 
 @Composable
 fun ShoppingListItem(
@@ -57,7 +58,7 @@ fun ShoppingListItem(
             value = price,
             maxLength = 6,
             onValueChanged = {
-                price = it
+                price = DecimalFormatter.cleanup(it)
                 onItemPriceChanged(price.toFloatOrNull() ?: 0f)
             },
             placeholder = "Price",
