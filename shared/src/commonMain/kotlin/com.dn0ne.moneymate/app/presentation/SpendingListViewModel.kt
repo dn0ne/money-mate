@@ -3,6 +3,7 @@ package com.dn0ne.moneymate.app.presentation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.dn0ne.moneymate.app.domain.Category
 import com.dn0ne.moneymate.app.domain.DataSource
 import com.dn0ne.moneymate.app.domain.Spending
 import com.dn0ne.moneymate.app.domain.SpendingValidator
@@ -217,6 +218,25 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
                     )
                 }
             }
+        }
+    }
+
+    private suspend fun insertInitialCategories() {
+        listOf(
+            Category(
+                name = "Transport",
+                iconName = "subway"
+            ),
+            Category(
+                name = "Food",
+                iconName = "restaurant"
+            ),
+            Category(
+                name = "Clothes",
+                iconName = "checkroom"
+            )
+        ).forEach {
+            dataSource.insertCategory(it)
         }
     }
 }
