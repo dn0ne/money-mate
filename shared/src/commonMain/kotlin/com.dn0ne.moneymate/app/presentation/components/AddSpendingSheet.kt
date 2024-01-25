@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -49,13 +50,18 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.dn0ne.moneymate.MR
+import com.dn0ne.moneymate.app.domain.Category
 import com.dn0ne.moneymate.app.domain.ShoppingItem
 import com.dn0ne.moneymate.app.domain.Spending
+import com.dn0ne.moneymate.app.extensions.copy
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
 import com.dn0ne.moneymate.util.DecimalFormatter
+import dev.icerock.moko.resources.compose.stringResource
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,13 +71,16 @@ import kotlin.math.roundToInt
 fun AddSpendingSheet(
     state: SpendingListState,
     newSpending: Spending?,
+    newCategory: Category?,
     isOpen: Boolean,
     onEvent: (SpendingListEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxContentWidth: Dp = Dp.Unspecified
 ) {
     SimpleBottomSheet(
         visible = isOpen,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
     ) {
         //-------------------------------------------------------------------------------
@@ -83,10 +92,16 @@ fun AddSpendingSheet(
         CollapsingTopAppBar(
             isCollapsed = isTopBarCollapsed,
             title = {
-                Text(text = "Spend", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    text = stringResource(MR.strings.title_spend),
+                    style = MaterialTheme.typography.headlineMedium
+                )
             },
             collapsedTitle = {
-                Text("Spend", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = stringResource(MR.strings.title_spend),
+                    style = MaterialTheme.typography.titleMedium
+                )
             },
             leadingButton = {
                 IconButton(
@@ -96,11 +111,12 @@ fun AddSpendingSheet(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBackIos,
-                        contentDescription = "Close add spending sheet",
+                        contentDescription = stringResource(MR.strings.add_spending_sheet_close_description),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            }
+            },
+            modifier = Modifier.widthIn(max = maxContentWidth)
         )
         //-------------------------------------------------------------------------------
         //  Content
@@ -134,6 +150,7 @@ fun AddSpendingSheet(
 
         Column(
             modifier = Modifier
+                .widthIn(max = maxContentWidth)
                 .fillMaxSize()
                 .scrollable(scrollableState, Orientation.Vertical)
                 .verticalScroll(scrollState)
@@ -144,9 +161,12 @@ fun AddSpendingSheet(
             //  Categories Dropdown Select
             //-------------------------------------------------------------------------------
             CategoryTextFieldWithDropdownMenu(
+                state = state,
+                newCategory = newCategory,
+                onEvent = onEvent,
                 categories = state.categories,
                 selectedCategory = newSpending?.category,
-                error = state.categoryError,
+                isError = state.categoryError,
                 modifier = Modifier.fillMaxWidth(),
                 visibleItemsCount = 3,
                 onCategoryChanged = {
@@ -166,7 +186,7 @@ fun AddSpendingSheet(
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Select details type",
+                        text = stringResource(MR.strings.select_details_type),
                         style = MaterialTheme.typography.bodyMedium
                     )
 
@@ -176,7 +196,10 @@ fun AddSpendingSheet(
                     //  Segmented button for choosing details type
                     //-------------------------------------------------------------------------------
                     SegmentedButton(
-                        items = listOf("Short description", "Shopping list"),
+                        items = listOf(
+                            stringResource(MR.strings.short_description),
+                            stringResource(MR.strings.shopping_list)
+                        ),
                         modifier = Modifier.fillMaxWidth(),
                         onItemSelection = {
                             detailsType = it
@@ -222,8 +245,8 @@ fun AddSpendingSheet(
                                                 )
                                             )
                                         },
-                                        placeholder = "Describe your purchase",
-                                        error = state.shortDescriptionError,
+                                        placeholder = stringResource(MR.strings.describe_your_spending),
+                                        error = state.shortDescriptionError?.let { stringResource(MR.strings.description_error) },
                                         keyboardType = KeyboardType.Text
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
@@ -240,11 +263,17 @@ fun AddSpendingSheet(
                                     Spacer(modifier = Modifier.height(16.dp))
 
                                     val shoppingList = remember {
-                                        newSpending?.shoppingList?.apply {
-                                            if (isEmpty()) {
-                                                add(ShoppingItem())
+                                        (
+                                                newSpending?.shoppingList?.map { it.copy() }
+                                                    ?.toMutableStateList()?.apply {
+                                                        if (isEmpty()) {
+                                                            add(ShoppingItem())
+                                                        }
+                                                    }
+                                                    ?: mutableStateListOf(ShoppingItem())
+                                                ).also {
+                                                onEvent(SpendingListEvent.OnShoppingListChanged(it))
                                             }
-                                        }?.toMutableStateList() ?: mutableStateListOf(ShoppingItem())
                                     }
 
 
@@ -254,7 +283,7 @@ fun AddSpendingSheet(
                                     ShoppingListItem(
                                         item = shoppingList[0],
                                         onItemNameChanged = {
-                                            shoppingList[0].name = it.trim()
+                                            shoppingList[0] = shoppingList[0].copy(name = it.trim())
                                             onEvent(
                                                 SpendingListEvent.OnShoppingListChanged(
                                                     shoppingList
@@ -262,7 +291,7 @@ fun AddSpendingSheet(
                                             )
                                         },
                                         onItemPriceChanged = {
-                                            shoppingList[0].price = it
+                                            shoppingList[0] = shoppingList[0].copy(price = it)
                                             onEvent(
                                                 SpendingListEvent.OnShoppingListChanged(
                                                     shoppingList
@@ -284,7 +313,7 @@ fun AddSpendingSheet(
                                     //---------------------------------------------------------------
                                     //  Additional List Items
                                     //---------------------------------------------------------------
-                                    for (item in shoppingList.drop(1)) {
+                                    shoppingList.drop(1).forEach { item ->
                                         key(item) {
                                             val visibleState = remember {
                                                 MutableTransitionState(false).apply {
@@ -323,7 +352,9 @@ fun AddSpendingSheet(
                                                                 )
                                                             )
                                                         },
-                                                        itemError = state.shoppingListError?.get(item),
+                                                        itemError = state.shoppingListError?.get(
+                                                            item
+                                                        ),
                                                         onDeleteButtonClick = {
                                                             coroutineScope.launch {
                                                                 visibleState.targetState = false
@@ -332,6 +363,13 @@ fun AddSpendingSheet(
                                                                 onEvent(
                                                                     SpendingListEvent.OnShoppingListChanged(
                                                                         shoppingList
+                                                                    )
+                                                                )
+                                                                onEvent(
+                                                                    SpendingListEvent.OnAmountChanged(
+                                                                        shoppingList.map { shoppingItem ->
+                                                                            shoppingItem.price
+                                                                        }.sum()
                                                                     )
                                                                 )
                                                             }
@@ -372,7 +410,7 @@ fun AddSpendingSheet(
                                             contentDescription = null,
                                             modifier = Modifier.size(22.dp)
                                         )
-                                        Text("Add item")
+                                        Text(text = stringResource(MR.strings.add_item))
                                     }
                                 }
                             }
@@ -397,11 +435,11 @@ fun AddSpendingSheet(
                     )
                 }
                 SpendingTextField(
-                    label = "Amount spent",
+                    label = stringResource(MR.strings.amount_spent),
                     value = amount,
                     maxLength = 7,
-                    placeholder = "Enter amount",
-                    error = state.amountError,
+                    placeholder = stringResource(MR.strings.enter_amount),
+                    error = state.amountError?.let { stringResource(MR.strings.amount_error) },
                     onValueChanged = {
                         amount = DecimalFormatter.cleanup(it)
                         onEvent(SpendingListEvent.OnAmountChanged(amount.toFloatOrNull() ?: 0f))
@@ -447,7 +485,7 @@ fun AddSpendingSheet(
 
                                 Spacer(modifier = Modifier.width(4.dp))
 
-                                Text(text = "Add details")
+                                Text(text = stringResource(MR.strings.add_details))
                             } else {
                                 Icon(
                                     imageVector = Icons.Rounded.Close,
@@ -457,7 +495,7 @@ fun AddSpendingSheet(
 
                                 Spacer(modifier = Modifier.width(4.dp))
 
-                                Text(text = "Remove details")
+                                Text(text = stringResource(MR.strings.remove_details))
                             }
                         }
                     }
@@ -474,7 +512,7 @@ fun AddSpendingSheet(
                     },
                     modifier = Modifier.weight(1f).fillMaxWidth()
                 ) {
-                    Text(text = "Confirm")
+                    Text(text = stringResource(MR.strings.confirm))
                 }
             }
         }
