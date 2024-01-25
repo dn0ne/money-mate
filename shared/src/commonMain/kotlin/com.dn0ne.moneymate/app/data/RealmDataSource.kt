@@ -5,9 +5,10 @@ import com.dn0ne.moneymate.app.domain.DataSource
 import com.dn0ne.moneymate.app.domain.Spending
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDate
+import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
 /**
@@ -16,21 +17,6 @@ import org.mongodb.kbson.ObjectId
 class RealmDataSource(private val realm: Realm) : DataSource {
     override fun getSpendings(): Flow<List<Spending>> {
         return realm.query<Spending>().asFlow().map { it.list.reversed() }
-    }
-
-    override fun getSpendingsAfter(date: LocalDate): Flow<List<Spending>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getSpendingsWithCategory(category: Category): Flow<List<Spending>> {
-        return realm.query<Spending>(query = "category == $0", category).asFlow().map { it.list }
-    }
-
-    override fun getSpendingsWithCategoryAfter(
-        category: Category,
-        date: LocalDate
-    ): Flow<List<Spending>> {
-        TODO("Not yet implemented")
     }
 
     override suspend fun insertSpending(spending: Spending) {
@@ -46,10 +32,12 @@ class RealmDataSource(private val realm: Realm) : DataSource {
                 realm.query<Spending>(query = "id == $0", spending.id).first().find()!!
             )
 
-            queriedSpending?.category = findLatest(spending.category!!)
-            queriedSpending?.amount = spending.amount
-            queriedSpending?.shortDescription = spending.shortDescription
-            queriedSpending?.shoppingList = spending.shoppingList
+            queriedSpending?.apply {
+                category = findLatest(spending.category!!)
+                amount = spending.amount
+                shortDescription = spending.shortDescription
+                shoppingList = spending.shoppingList
+            }
         }
     }
 
@@ -74,8 +62,38 @@ class RealmDataSource(private val realm: Realm) : DataSource {
         }
     }
 
-    override suspend fun deleteCategory(id: ObjectId) {
-        TODO("Not yet implemented")
+    override suspend fun updateCategory(category: Category) {
+        realm.write {
+            val queriedCategory = findLatest(
+                realm.query<Category>(query = "id == $0", category.id).first().find()!!
+            )
+
+            queriedCategory?.apply {
+                name = category.name
+                iconName = category.iconName
+            }
+        }
     }
 
+    override suspend fun deleteCategory(id: ObjectId) {
+        val queriedCategory = realm.query<Category>(query = "id == $0", id).first().find()
+
+        val queriedSpendings =
+            realm.query<Spending>(query = "category == $0", queriedCategory).find()
+        coroutineScope {
+            launch {
+                queriedSpendings.forEach { spending ->
+                    deleteSpending(spending.id)
+                }
+            }
+        }
+
+        realm.write {
+            try {
+                queriedCategory?.let { findLatest(it)?.let { latest -> delete(latest) } }
+            } catch (e: IllegalArgumentException) {
+                println("REALM ERROR: category to be deleted not found")
+            }
+        }
+    }
 }
