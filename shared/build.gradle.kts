@@ -4,11 +4,24 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
-    id("io.realm.kotlin") version "1.11.0"
+    id("io.realm.kotlin") version "1.13.0"
 }
 
+val mokoResourcesVersion = extra["moko.resources.version"] as String
+val mokoMvvmVersion = extra["moko.mvvm.version"] as String
+val kotlinxDateTimeVersion = extra["kotlinx.datetime.version"] as String
+val kotlinxCoroutinesVersion = extra["kotlinx.coroutines.version"] as String
+val realmVersion = extra["realm.version"] as String
+val settingsVersion = extra["settings.version"] as String
+
 kotlin {
-    android()
+    androidTarget()
+
+    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+        binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework::class.java) {
+            export("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+        }
+    }
 
     iosX64()
     iosArm64()
@@ -29,9 +42,6 @@ kotlin {
     }
 
     sourceSets {
-        val mokoResourcesVersion = extra["moko.resources.version"] as String
-        val mokoMvvmVersion = extra["moko.mvvm.version"] as String
-
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
@@ -46,16 +56,24 @@ kotlin {
                 implementation("dev.icerock.moko:mvvm-compose:$mokoMvvmVersion")
 
                 // Realm
-                implementation("io.realm.kotlin:library-base:1.11.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation("io.realm.kotlin:library-base:$realmVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
 
                 // KotlinX DateTime
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+
+                // Settings
+                implementation("com.russhwolf:multiplatform-settings-no-arg:$settingsVersion")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:$settingsVersion")
+
+                // Mobile Ads SDK
+                implementation("com.google.android.gms:play-services-ads:22.6.0")
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             dependencies {
-                api("androidx.activity:activity-compose:1.8.0")
+                api("androidx.activity:activity-compose:1.8.2")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.12.0")
             }
@@ -95,4 +113,11 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+}
+
+dependencies {
+    commonMainApi("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-compose:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-flow:$mokoMvvmVersion")
+    commonMainApi("dev.icerock.moko:mvvm-flow-compose:$mokoMvvmVersion")
 }

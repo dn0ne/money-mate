@@ -7,3 +7,7 @@ plugins {
     id("org.jetbrains.compose").apply(false)
     id("dev.icerock.mobile.multiplatform-resources").apply(false)
 }
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}

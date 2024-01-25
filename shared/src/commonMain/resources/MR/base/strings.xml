@@ -1,4 +1,154 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
-    <string name="hello_world">Hello moko-resources World</string>
+    <!-- DayOfWeek Strings -->
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
+    <!-- DayOfWeek Short Strings -->
+    <string name="monday_short">M</string>
+    <string name="tuesday_short">T</string>
+    <string name="wednesday_short">W</string>
+    <string name="thursday_short">T</string>
+    <string name="friday_short">F</string>
+    <string name="saturday_short">S</string>
+    <string name="sunday_short">S</string>
+
+    <!-- Month Strings -->
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <!-- BudgetPeriod Strings -->
+    <string name="month">Month</string>
+    <string name="week">Week</string>
+    <string name="day">Day</string>
+
+    <!-- Theme Strings -->
+    <string name="system">System default</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+
+    <!--  General  -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="price">Price</string>
+    <string name="name">Name</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+
+    <!--  SpendingListScreen Strings  -->
+    <string name="spend">Spend</string>
+    <string name="empty_list_greeting">Hey there, budget buddy!\nReady to fill this list with wise purchases?</string>
+    <string name="empty_filtered_list_greeting">Nothing has been spent yet\nfor this budget period</string>
+    <string name="summary">Summary</string>
+    <string name="settings">Settings</string>
+    <string name="total_spending">Total spending</string>
+    <string name="remaining">Remaining</string>
+    <string name="scroll_up">Scroll up</string>
+
+    <!--  AddSpendingSheet Strings  -->
+    <string name="title_spend">Spend</string>
+    <string name="add_spending_sheet_close_description">Close add spending sheet</string>
+    <string name="select_details_type">Select details type</string>
+    <string name="short_description">Short description</string>
+    <string name="shopping_list">Shopping list</string>
+    <string name="describe_your_spending">Describe your spending</string>
+    <string name="add_item">Add item</string>
+    <string name="remove_item_tooltip">Remove item</string>
+    <string name="amount_spent">Amount spent</string>
+    <string name="enter_amount">Enter amount</string>
+    <string name="add_details">Add details</string>
+    <string name="remove_details">Remove details</string>
+
+    <!--  CategoryTextFieldWithDropdownMenu Strings  -->
+    <string name="category">Category</string>
+    <string name="choose_category">Choose category</string>
+    <string name="add_new_category">Add new</string>
+
+    <!--  AddCategoryDialog Strings  -->
+    <string name="add_category">Add category</string>
+    <string name="edit_category">Edit category</string>
+    <string name="pick_icon">Pick an icon</string>
+
+    <!--  ShoppingListTitles Strings  -->
+    <string name="item_name">Item name</string>
+
+    <!--  ShoppingListItem Strings  -->
+    <string name="item_error">Should be filled</string>
+    <string name="delete_item_button_description">Delete item</string>
+
+    <!-- SummarySheet Strings -->
+    <string name="summary">Summary</string>
+    <string name="summary_sheet_close_description">Close summary sheet</string>
+    <string name="date_range_tooltip">Date range</string>
+    <string name="open_date_picker">Open date picker</string>
+    <string name="no_spendings_yet">Looks like you haven\'t\nspent anything yet!</string>
+    <string name="no_spendings_during">There were no spendings during\n%s</string>
+
+    <!-- SimpleDateRangePicker Strings -->
+    <string name="pick_date_range">Pick date range</string>
+
+    <!-- SpendingDetailSheet Strings -->
+    <string name="total">Total</string>
+    <string name="spending_detail_sheet_close_description">Close spending details</string>
+
+    <!-- SettingsSheet Strings -->
+    <string name="settings_sheet_close_description">Close settings sheet</string>
+    <string name="theme">Theme</string>
+    <string name="categories">Categories</string>
+    <string name="edit_tooltip">Edit</string>
+    <string name="delete_tooltip">Delete</string>
+    <string name="budget">Budget</string>
+    <string name="amount">Amount</string>
+    <string name="amount_tip">To disable the budget, set its amount to zero</string>
+    <string name="period">Period</string>
+    <string name="first_day">First day</string>
+    <string name="feedback">Feedback</string>
+    <string name="suggest_a_feature">Suggest a feature</string>
+    <string name="suggest_feature_mailto">mailto:feedback.dn0ne@gmail.com?subject=Feature%20suggestion.%20MoneyMate</string>
+    <string name="report_an_issue">Report an issue</string>
+    <string name="report_issue_mailto">mailto:feedback.dn0ne@gmail.com?subject=Issue%20report.%20MoneyMate</string>
+
+    <!-- ThemeDialog Strings -->
+    <string name="app_theme">App theme</string>
+    <string name="use_dynamic_color">Use dynamic color</string>
+
+    <!-- CategoryItem Strings -->
+    <string name="delete_category">Delete category</string>
+
+    <!-- DeleteCategoryDialog -->
+    <string name="delete_category_question">Delete category?</string>
+    <string name="delete_category_warning">All spendings in this category will also be deleted.</string>
+
+    <!-- Budget settings Strings -->
+    <string name="change_amount">Change amount</string>
+    <string name="set_amount">Set amount</string>
+    <string name="change_budget_period">Change budget period</string>
+    <string name="change_first_day">Change first day</string>
+
+    <!-- Errors Strings -->
+    <string name="category_error">Please select a category.</string>
+    <string name="description_error">Please fill the description.</string>
+    <string name="amount_error">Please specify an amount other than zero.</string>
+    <string name="budget_amount_error">Please specify an amount.</string>
+    <string name="category_name_error">Please name the category.</string>
+    <string name="category_icon_error">Please pick an icon.</string>
+
+    <!-- Ad Strings -->
+    <string name="ad">ca-app-pub-9191812901943784/5035891565</string>
 </resources>
