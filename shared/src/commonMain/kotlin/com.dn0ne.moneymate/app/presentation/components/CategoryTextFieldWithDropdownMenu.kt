@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,14 +30,21 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.dn0ne.moneymate.MR
 import com.dn0ne.moneymate.app.domain.Category
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
+import com.dn0ne.moneymate.app.presentation.SpendingListEvent
+import com.dn0ne.moneymate.app.presentation.SpendingListState
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun CategoryTextFieldWithDropdownMenu(
+    state: SpendingListState,
+    newCategory: Category?,
+    onEvent: (SpendingListEvent) -> Unit,
     categories: List<Category>,
     selectedCategory: Category?,
-    error: String?,
+    isError: Boolean?,
     modifier: Modifier = Modifier,
     visibleItemsCount: Int = categories.size,
     showHalfOfOutOfBoundsElement: Boolean = categories.size > visibleItemsCount,
@@ -65,7 +75,10 @@ fun CategoryTextFieldWithDropdownMenu(
         } else {
             visibleItemsCount
         }
+            .coerceAtLeast(1)
+
     val halfOfOutOfBoundsElementHeight = itemHeight / 2 + menuVerticalPadding / 8
+
     val menuHeight: Dp =
         (menuVerticalPadding +
                 itemHeight * itemsToShowCount +
@@ -79,13 +92,21 @@ fun CategoryTextFieldWithDropdownMenu(
                 columnSize = it.size.toSize()
             }
     ) {
+
+        AddCategoryDialog(
+            state = state,
+            newCategory = newCategory,
+            editing = false,
+            onEvent = onEvent
+        )
+
         OutlinedTextField(
             label = {
-                Text("Category")
+                Text(text = stringResource(MR.strings.category))
             },
             value = chosenCategory.name,
             placeholder = {
-                Text("Choose category")
+                Text(stringResource(MR.strings.choose_category))
             },
             onValueChange = { },
             readOnly = true,
@@ -93,11 +114,11 @@ fun CategoryTextFieldWithDropdownMenu(
             trailingIcon = {
                 Icon(imageVector = Icons.Rounded.ArrowDropDown, contentDescription = null)
             },
-            leadingIcon = if (leadingIcon != null) {
+            leadingIcon = leadingIcon?.let {
                 {
-                    Icon(imageVector = leadingIcon!!, contentDescription = null)
+                    Icon(imageVector = it, contentDescription = null)
                 }
-            } else null,
+            },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             interactionSource = remember { MutableInteractionSource() }
@@ -110,12 +131,15 @@ fun CategoryTextFieldWithDropdownMenu(
                         }
                     }
                 },
-            supportingText = if (error != null) {
+            supportingText = isError?.let {
                 {
-                    Text(text = error, color = MaterialTheme.colorScheme.error)
+                    Text(
+                        text = stringResource(MR.strings.category_error),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
-            } else null,
-            isError = error != null
+            },
+            isError = isError ?: false
         )
         DropdownMenu(
             expanded = menuExpanded,
@@ -143,6 +167,27 @@ fun CategoryTextFieldWithDropdownMenu(
                     }
                 )
             }
+
+            if (categories.isNotEmpty()) {
+                Divider(
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(50.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = null
+                    )
+                },
+                text = {
+                    Text(text = stringResource(MR.strings.add_new_category))
+                },
+                onClick = {
+                    onEvent(SpendingListEvent.OnAddNewCategoryClick)
+                }
+            )
         }
     }
 }
