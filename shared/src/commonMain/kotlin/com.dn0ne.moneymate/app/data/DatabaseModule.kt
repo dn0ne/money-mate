@@ -13,6 +13,7 @@ import io.realm.kotlin.RealmConfiguration
 object DatabaseModule {
     val dataSource = provideDataSource()
     private fun provideRealm(): Realm {
+        // Creating Realm configuration
         val config = RealmConfiguration.Builder(
             schema = setOf(
                 Spending::class,

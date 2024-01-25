@@ -1,7 +1,6 @@
 package com.dn0ne.moneymate.app.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.LocalDate
 import org.mongodb.kbson.ObjectId
 
 interface DataSource {
@@ -9,14 +8,6 @@ interface DataSource {
      * @return List of all [Spending]s wrapped in [Flow]
      */
     fun getSpendings(): Flow<List<Spending>>
-    fun getSpendingsAfter(date: LocalDate): Flow<List<Spending>>
-
-    /**
-     * @param category Spending category
-     * @return List of all [Spending]s with the given [Category] wrapped in [Flow]
-     */
-    fun getSpendingsWithCategory(category: Category): Flow<List<Spending>>
-    fun getSpendingsWithCategoryAfter(category: Category, date: LocalDate): Flow<List<Spending>>
 
     /**
      * Inserts the given [Spending] into the database
@@ -52,4 +43,10 @@ interface DataSource {
      * @param id Id of the [Category] to delete
      */
     suspend fun deleteCategory(id: ObjectId)
+
+    /**
+     * Updates the given [Category] in the database
+     * @param category Spending to update
+     */
+    suspend fun updateCategory(category: Category)
 }
