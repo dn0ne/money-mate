@@ -17,23 +17,23 @@ fun SpendingTextField(
     maxLength: Int = 20,
     label: String? = null,
     placeholder: String? = null,
-    error: String?,
+    error: String? = null,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         OutlinedTextField(
-            label = if (label != null) {
+            label = label?.let {
                 {
                     Text(text = label)
                 }
-            } else null,
-            value = value,
-            placeholder = if (placeholder != null) {
+            },
+            value = value.take(maxLength),
+            placeholder = placeholder?.let {
                 {
                     Text(text = placeholder)
                 }
-            } else null,
+            },
             onValueChange = {
                 if (it.length <= maxLength) {
                     onValueChanged(it)
@@ -41,11 +41,11 @@ fun SpendingTextField(
             },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            supportingText = if (error != null) {
+            supportingText = error?.let {
                 {
                     Text(text = error, color = MaterialTheme.colorScheme.error)
                 }
-            } else null,
+            },
             isError = error != null,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
         )
