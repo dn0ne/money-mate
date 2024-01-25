@@ -8,7 +8,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.dn0ne.moneymate.app.extensions.safeSystemBarsAndDisplayCutoutPadding
 
 @Composable
 fun SimpleBottomSheet(
@@ -25,9 +27,11 @@ fun SimpleBottomSheet(
         exit = slideOutVertically(
             animationSpec = tween(300),
             targetOffsetY = { it }
-        )
+        ),
+        modifier = Modifier.safeSystemBarsAndDisplayCutoutPadding()
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier.clickable(enabled = false, onClick = {})
         ) {
             content()
