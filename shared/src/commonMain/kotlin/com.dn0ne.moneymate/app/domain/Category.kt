@@ -21,7 +21,12 @@ class Category(): RealmObject {
      * @param name Category name
      * @param iconName Category icon name, taken from [CategoryIcons]
      */
-    constructor(name: String, iconName: String): this() {
+    constructor(
+        id: ObjectId? = null,
+        name: String,
+        iconName: String
+    ): this() {
+        id?.let { this.id = it }
         this.name = name
         this.iconName = iconName
     }
