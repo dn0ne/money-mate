@@ -7,7 +7,7 @@ object SpendingValidator {
 
         if (spending.category == null) {
             result = result.copy(
-                categoryError = "Category can't be unselected."
+                categoryError = true
             )
         }
 
@@ -20,14 +20,14 @@ object SpendingValidator {
         if (spending.amount == 0f) {
             if (spending.shoppingList.isEmpty()) {
                 result = result.copy(
-                    amountError = "Amount can't be empty or equal to zero."
+                    amountError = true
                 )
             }
         }
 
         if (spending.shortDescription?.isBlank() == true) {
             result = result.copy(
-                shortDescriptionError = "Description can't be empty."
+                shortDescriptionError = true
             )
         }
 
@@ -46,9 +46,9 @@ object SpendingValidator {
     }
 
     data class ValidationResult(
-        val categoryError: String? = null,
-        val amountError: String? = null,
-        val shortDescriptionError: String? = null,
+        val categoryError: Boolean? = null,
+        val amountError: Boolean? = null,
+        val shortDescriptionError: Boolean? = null,
         val shoppingListError: Map<ShoppingItem, Pair<Boolean, Boolean>>? = null
     )
 }
