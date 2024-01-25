@@ -11,6 +11,10 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(project(":shared"))
+                implementation("androidx.core:core-splashscreen:1.0.1")
+
+                // Mobile Ads SDK
+                implementation("com.google.android.gms:play-services-ads:22.6.0")
             }
         }
     }
