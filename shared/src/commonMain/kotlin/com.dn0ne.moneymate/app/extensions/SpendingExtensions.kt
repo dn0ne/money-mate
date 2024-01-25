@@ -5,6 +5,9 @@ import com.dn0ne.moneymate.app.domain.ShoppingItem
 import com.dn0ne.moneymate.app.domain.Spending
 import io.realm.kotlin.types.RealmList
 
+/**
+ * Returns new Spending with same values
+ */
 fun Spending.copy(
     category: Category? = this.category,
     amount: Float = this.amount,
