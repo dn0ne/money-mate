@@ -42,11 +42,11 @@ class Spending(): RealmObject {
         shoppingList: List<ShoppingItem> = listOf(),
         spentAt: RealmInstant? = null
     ) : this() {
-        if (id != null) this.id = id
+        id?.let { this.id = it }
         this.category = category
         this.amount = amount
         this.shortDescription = shortDescription
         this.shoppingList = shoppingList.toRealmList()
-        if (spentAt != null) this.spentAt = spentAt
+        spentAt?.let { this.spentAt = it }
     }
 }
