@@ -29,22 +29,20 @@ fun CollapsingTopAppBar(
     isCollapsed: Boolean,
     title: @Composable () -> Unit,
     collapsedTitle: @Composable () -> Unit,
-    leadingButton: (@Composable () -> Unit)? = null,
-    trailingButtons: (@Composable RowScope.() -> Unit)? = null,
+    leadingButton: @Composable () -> Unit = {},
+    trailingButtons: @Composable RowScope.() -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val minTopBarHeight = 48.dp
+    val minTopBarHeight = 64.dp
     Box(
         modifier = modifier
             .animateContentSize()
             .heightIn(min = minTopBarHeight)
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
-        leadingButton?.let {
-            Box(modifier = Modifier.align(Alignment.BottomStart)) {
-                it()
-            }
+        Box(modifier = Modifier.align(Alignment.BottomStart)) {
+            leadingButton()
         }
 
         AnimatedVisibility(
@@ -61,11 +59,12 @@ fun CollapsingTopAppBar(
                     easing = EaseInOut
                 )
             ),
-            modifier = Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.height(minTopBarHeight)
+                modifier = Modifier.height(48.dp)
             ) {
                 collapsedTitle()
             }
@@ -90,20 +89,17 @@ fun CollapsingTopAppBar(
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxHeight(.3f)
+                modifier = Modifier.fillMaxHeight(.35f)
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
                 title()
             }
         }
 
-        trailingButtons?.let {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.align(Alignment.BottomEnd)
-            ) {
-                it()
-            }
+        Row(
+            modifier = Modifier.align(Alignment.BottomEnd)
+        ) {
+            trailingButtons()
         }
     }
 }
