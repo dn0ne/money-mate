@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <!-- DayOfWeek Strings -->
+    <string name="monday">Понеділок</string>
+    <string name="tuesday">Вівторок</string>
+    <string name="wednesday">Середа</string>
+    <string name="thursday">Четвер</string>
+    <string name="friday">П\'ятниця</string>
+    <string name="saturday">Субота</string>
+    <string name="sunday">Неділя</string>
+
+    <!-- DayOfWeek Short Strings -->
+    <string name="monday_short">П</string>
+    <string name="tuesday_short">В</string>
+    <string name="wednesday_short">С</string>
+    <string name="thursday_short">Ч</string>
+    <string name="friday_short">П</string>
+    <string name="saturday_short">С</string>
+    <string name="sunday_short">Н</string>
+
+    <!-- Month Strings -->
+    <string name="january">Січня</string>
+    <string name="february">Лютого</string>
+    <string name="march">Березня</string>
+    <string name="april">Квітня</string>
+    <string name="may">Травня</string>
+    <string name="june">Червня</string>
+    <string name="july">Липня</string>
+    <string name="august">Серпня</string>
+    <string name="september">Вересня</string>
+    <string name="october">Жовтня</string>
+    <string name="november">Листопада</string>
+    <string name="december">Грудня</string>
+
+    <!-- BudgetPeriod Strings -->
+    <string name="month">Місяць</string>
+    <string name="week">Тиждень</string>
+    <string name="day">День</string>
+
+    <!-- Theme Strings -->
+    <string name="system">Тема пристрою</string>
+    <string name="dark">Темна</string>
+    <string name="light">Світла</string>
+
+    <!--  General  -->
+    <string name="confirm">Підтвердити</string>
+    <string name="cancel">Скасувати</string>
+    <string name="apply">Застосувати</string>
+    <string name="price">Ціна</string>
+    <string name="name">Назва</string>
+    <string name="delete">Видалити</string>
+    <string name="edit">Змінити</string>
+
+    <!--  SpendingListScreen Strings  -->
+    <string name="spend">Витратити</string>
+    <string name="empty_list_greeting">Вітаю! Готові наповнити\nцей список розумними покупками?</string>
+    <string name="empty_filtered_list_greeting">За цей бюджетний період\nще нічого не витрачено</string>
+    <string name="summary">Статистика</string>
+    <string name="settings">Параметри</string>
+    <string name="total_spending">Всього витрачено</string>
+    <string name="remaining">Залишилось</string>
+    <string name="scroll_up">Вгору</string>
+
+
+    <!--  AddSpendingSheet Strings  -->
+    <string name="title_spend">Витрата</string>
+    <string name="add_spending_sheet_close_description">Закрити екран додавання витрати</string>
+    <string name="select_details_type">Тип деталей</string>
+    <string name="short_description">Короткий опис</string>
+    <string name="shopping_list">Список покупок</string>
+    <string name="describe_your_spending">Додайте опис</string>
+    <string name="add_item">Додати елемент</string>
+    <string name="remove_item_tooltip">Видалити елемент</string>
+    <string name="amount_spent">Сума</string>
+    <string name="enter_amount">Введіть суму</string>
+    <string name="add_details">Доповнити</string>
+    <string name="remove_details">Скоротити</string>
+
+    <!--  CategoryTextFieldWithDropdownMenu Strings  -->
+    <string name="category">Категорія</string>
+    <string name="choose_category">Виберіть категорію</string>
+    <string name="add_new_category">Нова категорія</string>
+
+    <!--  AddCategoryDialog Strings  -->
+    <string name="add_category">Нова категорія</string>
+    <string name="edit_category">Редагування категорії</string>
+    <string name="pick_icon">Виберіть позначку</string>
+
+    <!--  ShoppingListTitles Strings  -->
+    <string name="item_name">Назва елемента</string>
+
+    <!--  ShoppingListItem Strings  -->
+    <string name="item_error">Треба заповнити.</string>
+    <string name="delete_item_button_description">Видалити елемент</string>
+
+    <!-- SummarySheet Strings -->
+    <string name="summary">Статистика</string>
+    <string name="summary_sheet_close_description">Закрити екран статистики</string>
+    <string name="date_range_tooltip">Діапазон дат</string>
+    <string name="open_date_picker">Відкрити діалог вибору дати</string>
+    <string name="no_spendings_yet">Схоже Ви ще\nнічого не витратили!</string>
+    <string name="no_spendings_during">Немає витрат за цей період\n%s</string>
+
+    <!-- SimpleDateRangePicker Strings -->
+    <string name="pick_date_range">Оберіть діапазон дат</string>
+
+    <!-- SpendingDetailSheet Strings -->
+    <string name="total">Усього</string>
+    <string name="spending_detail_sheet_close_description">Закрити екран інформації про витрату</string>
+
+    <!-- SettingsSheet Strings -->
+    <string name="settings_sheet_close_description">Закрити екран налаштувань</string>
+    <string name="theme">Тема</string>
+    <string name="categories">Категорії</string>
+    <string name="edit_tooltip">Змінити</string>
+    <string name="delete_tooltip">Видалити</string>
+    <string name="budget">Бюджет</string>
+    <string name="amount">Сума</string>
+    <string name="amount_tip">Щоб відключити бюджет, встановіть його суму рівною нулю</string>
+    <string name="period">Період</string>
+    <string name="first_day">Перший день</string>
+    <string name="feedback">Зворотній зв\'язок</string>
+    <string name="suggest_a_feature">Запропонувати функцію</string>
+    <string name="suggest_feature_mailto">mailto:feedback.dn0ne@gmail.com?subject=Пропозиція%20функції.%20MoneyMate</string>
+    <string name="report_an_issue">Повідомити про проблему</string>
+    <string name="report_issue_mailto">mailto:feedback.dn0ne@gmail.com?subject=Повідомлення%20про%20проблему.%20MoneyMate</string>
+
+    <!-- ThemeDialog Strings -->
+    <string name="app_theme">Тема додатку</string>
+    <string name="use_dynamic_color">Динамічний колір</string>
+
+    <!-- CategoryItem Strings -->
+    <string name="delete_category">Видалити категорію</string>
+
+    <!-- DeleteCategoryDialog -->
+    <string name="delete_category_question">Видалити категорію?</string>
+    <string name="delete_category_warning">Усі витрати у цій категорії також будуть видалені.</string>
+
+    <!-- Budget settings Strings -->
+    <string name="change_amount">Сума бюджету</string>
+    <string name="set_amount">Нова сума</string>
+    <string name="change_budget_period">Період</string>
+    <string name="change_first_day">Перший день</string>
+
+    <!-- Errors Strings -->
+    <string name="category_error">Будь ласка, оберіть категорію.</string>
+    <string name="description_error">Будь ласка, надайте опис.</string>
+    <string name="amount_error">Будь ласка, вкажіть суму, відмінну від нуля.</string>
+    <string name="budget_amount_error">Будь ласка, не залишайте поле пустим.</string>
+    <string name="category_name_error">Будь ласка, дайте назву категорії.</string>
+    <string name="category_icon_error">Будь ласка, оберіть позначку.</string>
+
+</resources>
