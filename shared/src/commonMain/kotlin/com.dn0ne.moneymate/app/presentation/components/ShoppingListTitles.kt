@@ -8,18 +8,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.dn0ne.moneymate.MR
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun ShoppingListTitles(modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
         Text(
-            text = "Item name",
+            text = stringResource(MR.strings.item_name),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = "Price",
+            text = stringResource(MR.strings.price),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )

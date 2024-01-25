@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,9 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.dn0ne.moneymate.MR
 import com.dn0ne.moneymate.app.domain.ShoppingItem
 import com.dn0ne.moneymate.util.DecimalFormatter
+import dev.icerock.moko.resources.compose.stringResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListItem(
     item: ShoppingItem,
@@ -41,8 +47,8 @@ fun ShoppingListItem(
                 name = it
                 onItemNameChanged(name)
             },
-            error = if (itemError?.first == true) "Fill this" else null,
-            placeholder = "Name",
+            error = if (itemError?.first == true) stringResource(MR.strings.item_error) else null,
+            placeholder = stringResource(MR.strings.name),
             keyboardType = KeyboardType.Text,
             modifier = Modifier.weight(1f)
         )
@@ -61,8 +67,8 @@ fun ShoppingListItem(
                 price = DecimalFormatter.cleanup(it)
                 onItemPriceChanged(price.toFloatOrNull() ?: 0f)
             },
-            placeholder = "Price",
-            error = if (itemError?.second == true) "Fill this" else null,
+            placeholder = stringResource(MR.strings.price),
+            error = if (itemError?.second == true) stringResource(MR.strings.item_error) else null,
             keyboardType = KeyboardType.Number,
             modifier = Modifier.weight(
                 if (deletable) 0.7f else 1f
@@ -71,10 +77,20 @@ fun ShoppingListItem(
         if (deletable) {
             Column(modifier = Modifier.weight(.3f).fillMaxHeight()) {
                 Spacer(modifier = Modifier.height(4.dp))
-                IconButton(
-                    onClick = onDeleteButtonClick,
+                PlainTooltipBox(
+                    tooltip = {
+                        Text(text = stringResource(MR.strings.remove_item_tooltip))
+                    }
                 ) {
-                    Icon(imageVector = Icons.Rounded.Close, contentDescription = "Delete item")
+                    IconButton(
+                        onClick = onDeleteButtonClick,
+                        modifier = Modifier.tooltipAnchor()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = stringResource(MR.strings.delete_item_button_description)
+                        )
+                    }
                 }
             }
         }
