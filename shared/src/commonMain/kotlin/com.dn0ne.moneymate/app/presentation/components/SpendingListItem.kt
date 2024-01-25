@@ -1,11 +1,14 @@
 package com.dn0ne.moneymate.app.presentation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.dn0ne.moneymate.app.domain.Category
 import com.dn0ne.moneymate.app.domain.Spending
 import com.dn0ne.moneymate.app.extensions.toStringWithScale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpendingListItem(
     spending: Spending,
@@ -27,7 +32,7 @@ fun SpendingListItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val category = spending.category!!
+        val category = spending.category ?: Category()
         CategoryIcon(category)
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -40,19 +45,22 @@ fun SpendingListItem(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            if (spending.shortDescription != null) {
+            if (spending.shoppingList.isNotEmpty() || spending.shortDescription != null) {
                 Text(
-                    text = spending.shortDescription!!,
+                    text = if (spending.shoppingList.isNotEmpty()) {
+                        spending.shoppingList.take(3).joinToString(", ") { it.name } +
+                                (if (spending.shoppingList.size > 3) "..." else "")
+                    } else {
+                        spending.shortDescription ?: ""
+                    },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .fillMaxWidth(.5f)
+                        .basicMarquee()
                 )
-            }
-            if (spending.shoppingList.isNotEmpty()) {
-                Text(
-                    text = spending.shoppingList.take(3).joinToString(", ") { it.name }.take(17) + "...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+
             }
         }
 
