@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.extensions
+package com.dn0ne.moneymate.app.domain.extensions
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime

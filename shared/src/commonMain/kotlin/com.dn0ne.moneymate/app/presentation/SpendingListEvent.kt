@@ -1,10 +1,10 @@
 package com.dn0ne.moneymate.app.presentation
 
-import com.dn0ne.moneymate.app.domain.BudgetPeriod
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.ShoppingItem
-import com.dn0ne.moneymate.app.domain.Spending
-import com.dn0ne.moneymate.app.domain.Theme
+import com.dn0ne.moneymate.app.domain.enumerations.BudgetPeriod
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.enumerations.Theme
 
 /**
  * Interface with app events

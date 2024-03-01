@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.ShoppingItem
-import com.dn0ne.moneymate.util.DecimalFormatter
+import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.util.DecimalFormatter
 import dev.icerock.moko.resources.compose.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)

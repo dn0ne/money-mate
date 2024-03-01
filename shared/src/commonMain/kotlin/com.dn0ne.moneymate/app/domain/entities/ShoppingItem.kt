@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.entities
 
 import io.realm.kotlin.types.EmbeddedRealmObject
 

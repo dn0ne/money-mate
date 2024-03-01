@@ -63,12 +63,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.Spending
-import com.dn0ne.moneymate.app.extensions.safeSystemBarsAndDisplayCutoutPadding
-import com.dn0ne.moneymate.app.extensions.toLocalDate
-import com.dn0ne.moneymate.app.extensions.toStringWithScale
-import com.dn0ne.moneymate.app.extensions.today
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.extensions.safeSystemBarsAndDisplayCutoutPadding
+import com.dn0ne.moneymate.app.domain.extensions.toLocalDate
+import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
+import com.dn0ne.moneymate.app.domain.extensions.today
 import com.dn0ne.moneymate.app.presentation.components.AddSpendingSheet
 import com.dn0ne.moneymate.app.presentation.components.DotPageIndicator
 import com.dn0ne.moneymate.app.presentation.components.SettingsSheet
@@ -79,7 +79,7 @@ import com.dn0ne.moneymate.core.presentation.BackGestureHandler
 import com.dn0ne.moneymate.core.presentation.BannerAd
 import com.dn0ne.moneymate.core.presentation.ScrollUpButton
 import com.dn0ne.moneymate.core.presentation.animateTextStyleAsState
-import com.dn0ne.moneymate.util.DateFormatter
+import com.dn0ne.moneymate.app.domain.util.DateFormatter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate

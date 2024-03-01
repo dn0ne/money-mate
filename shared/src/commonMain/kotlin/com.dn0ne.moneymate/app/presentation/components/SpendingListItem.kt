@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.Spending
-import com.dn0ne.moneymate.app.extensions.toStringWithScale
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

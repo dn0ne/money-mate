@@ -3,13 +3,13 @@ package com.dn0ne.moneymate.app.presentation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.CategoryValidator
-import com.dn0ne.moneymate.app.domain.DataSource
-import com.dn0ne.moneymate.app.domain.Settings
-import com.dn0ne.moneymate.app.domain.Spending
-import com.dn0ne.moneymate.app.domain.SpendingValidator
-import com.dn0ne.moneymate.app.extensions.copy
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.validators.CategoryValidator
+import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
+import com.dn0ne.moneymate.app.domain.settings.Settings
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.validators.SpendingValidator
+import com.dn0ne.moneymate.app.domain.extensions.copy
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.delay
@@ -23,12 +23,12 @@ import kotlinx.coroutines.launch
 /**
  * App view model class
  */
-class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
+class SpendingListViewModel(private val spendingRepository: SpendingRepository) : ViewModel() {
 
     private val _settings = MutableStateFlow(Settings())
     private val _state = MutableStateFlow(SpendingListState())
     val state = combine(
-        _state, dataSource.getSpendings(), dataSource.getCategories(), _settings
+        _state, spendingRepository.getSpendings(), spendingRepository.getCategories(), _settings
     ) { state, spendings, categories, settings ->
         state.copy(
             spendings = spendings,
@@ -55,7 +55,7 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
                             )
                         }
 
-                        dataSource.deleteSpending(id)
+                        spendingRepository.deleteSpending(id)
                         delay(300L) // Animation delay
                         _state.update {
                             it.copy(
@@ -193,9 +193,9 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
 
                         viewModelScope.launch {
                             if (state.value.spendings.any { it.id == spending.id }) {
-                                dataSource.updateSpending(spending)
+                                spendingRepository.updateSpending(spending)
                             } else {
-                                dataSource.insertSpending(spending)
+                                spendingRepository.insertSpending(spending)
                             }
                             delay(300L) // Animation delay
                             newSpending = null
@@ -247,7 +247,7 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
                             )
                         }
 
-                        dataSource.deleteCategory(id)
+                        spendingRepository.deleteCategory(id)
                         newCategory = null
                     }
                 }
@@ -321,9 +321,9 @@ class SpendingListViewModel(private val dataSource: DataSource) : ViewModel() {
 
                         viewModelScope.launch {
                             if (state.value.categories.any { it.id == category.id }) {
-                                dataSource.updateCategory(category)
+                                spendingRepository.updateCategory(category)
                             } else {
-                                dataSource.insertCategory(category)
+                                spendingRepository.insertCategory(category)
                             }
                             newCategory = null
                         }

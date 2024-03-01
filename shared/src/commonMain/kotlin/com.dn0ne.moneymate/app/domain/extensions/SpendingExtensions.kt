@@ -1,8 +1,8 @@
-package com.dn0ne.moneymate.app.extensions
+package com.dn0ne.moneymate.app.domain.extensions
 
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.ShoppingItem
-import com.dn0ne.moneymate.app.domain.Spending
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.Spending
 import io.realm.kotlin.types.RealmList
 
 /**

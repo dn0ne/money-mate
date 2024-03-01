@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.util
+package com.dn0ne.moneymate.app.domain.util
 
 object DecimalFormatter {
 

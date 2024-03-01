@@ -1,9 +1,9 @@
 package com.dn0ne.moneymate.app.data
 
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.DataSource
-import com.dn0ne.moneymate.app.domain.ShoppingItem
-import com.dn0ne.moneymate.app.domain.Spending
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
@@ -26,7 +26,7 @@ object DatabaseModule {
         return Realm.open(config)
     }
 
-    private fun provideDataSource(): DataSource {
-        return RealmDataSource(provideRealm())
+    private fun provideDataSource(): SpendingRepository {
+        return RealmSpendingRepository(provideRealm())
     }
 }

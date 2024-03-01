@@ -1,4 +1,7 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.validators
+
+import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.Spending
 
 object SpendingValidator {
 

@@ -1,8 +1,8 @@
 package com.dn0ne.moneymate.app.data
 
-import com.dn0ne.moneymate.app.domain.Category
-import com.dn0ne.moneymate.app.domain.DataSource
-import com.dn0ne.moneymate.app.domain.Spending
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.coroutineScope
@@ -14,7 +14,7 @@ import org.mongodb.kbson.ObjectId
 /**
  * Realm DataSource implementation
  */
-class RealmDataSource(private val realm: Realm) : DataSource {
+class RealmSpendingRepository(private val realm: Realm) : SpendingRepository {
     override fun getSpendings(): Flow<List<Spending>> {
         return realm.query<Spending>().asFlow().map { it.list.reversed() }
     }

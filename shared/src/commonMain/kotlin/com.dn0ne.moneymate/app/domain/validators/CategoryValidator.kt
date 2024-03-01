@@ -1,4 +1,6 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.validators
+
+import com.dn0ne.moneymate.app.domain.entities.Category
 
 object CategoryValidator {
 

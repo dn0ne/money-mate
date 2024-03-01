@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.entities
 
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import io.realm.kotlin.types.RealmObject

@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.util
+package com.dn0ne.moneymate.app.domain.util
 
 import androidx.compose.runtime.Composable
 import com.dn0ne.moneymate.MR

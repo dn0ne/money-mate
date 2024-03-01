@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.extensions
+package com.dn0ne.moneymate.app.domain.extensions
 
 /**
  * Returns float converted into string in format "\d+.\d{[scale]}"

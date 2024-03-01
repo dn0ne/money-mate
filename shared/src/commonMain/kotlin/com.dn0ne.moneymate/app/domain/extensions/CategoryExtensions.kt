@@ -1,6 +1,6 @@
-package com.dn0ne.moneymate.app.extensions
+package com.dn0ne.moneymate.app.domain.extensions
 
-import com.dn0ne.moneymate.app.domain.Category
+import com.dn0ne.moneymate.app.domain.entities.Category
 
 fun Category.copy(
     name: String = this.name,

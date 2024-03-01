@@ -1,9 +1,11 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.repository
 
+import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.Spending
 import kotlinx.coroutines.flow.Flow
 import org.mongodb.kbson.ObjectId
 
-interface DataSource {
+interface SpendingRepository {
     /**
      * @return List of all [Spending]s wrapped in [Flow]
      */

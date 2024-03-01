@@ -1,8 +1,8 @@
-package com.dn0ne.moneymate.app.extensions
+package com.dn0ne.moneymate.app.domain.extensions
 
-import com.dn0ne.moneymate.app.domain.BudgetPeriod
-import com.dn0ne.moneymate.app.domain.Settings
-import com.dn0ne.moneymate.app.domain.Theme
+import com.dn0ne.moneymate.app.domain.enumerations.BudgetPeriod
+import com.dn0ne.moneymate.app.domain.settings.Settings
+import com.dn0ne.moneymate.app.domain.enumerations.Theme
 
 fun Settings.copy(
     theme: Theme = this.theme,

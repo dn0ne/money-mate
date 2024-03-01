@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.dn0ne.moneymate.app.extensions.safeSystemBarsAndDisplayCutoutPadding
+import com.dn0ne.moneymate.app.domain.extensions.safeSystemBarsAndDisplayCutoutPadding
 
 @Composable
 fun SimpleBottomSheet(

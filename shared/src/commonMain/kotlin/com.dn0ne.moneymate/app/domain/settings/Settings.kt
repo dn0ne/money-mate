@@ -1,8 +1,10 @@
-package com.dn0ne.moneymate.app.domain
+package com.dn0ne.moneymate.app.domain.settings
 
-import com.dn0ne.moneymate.app.extensions.copy
-import com.dn0ne.moneymate.app.extensions.getMonthDaysCount
-import com.dn0ne.moneymate.app.extensions.today
+import com.dn0ne.moneymate.app.domain.enumerations.BudgetPeriod
+import com.dn0ne.moneymate.app.domain.enumerations.Theme
+import com.dn0ne.moneymate.app.domain.extensions.copy
+import com.dn0ne.moneymate.app.domain.extensions.getMonthDaysCount
+import com.dn0ne.moneymate.app.domain.extensions.today
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
