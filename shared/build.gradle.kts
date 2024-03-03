@@ -13,6 +13,7 @@ val kotlinxDateTimeVersion = extra["kotlinx.datetime.version"] as String
 val kotlinxCoroutinesVersion = extra["kotlinx.coroutines.version"] as String
 val realmVersion = extra["realm.version"] as String
 val settingsVersion = extra["settings.version"] as String
+val koinVersion = extra["koin.version"] as String
 
 kotlin {
     androidTarget()
@@ -36,6 +37,9 @@ kotlin {
         framework {
             baseName = "shared"
             isStatic = true
+
+            export("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+            export("dev.icerock.moko:mvvm-flow:$mokoMvvmVersion")
         }
         extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
         extraSpecAttributes["exclude_files"] = "['src/commonMain/resources/MR/**']"
@@ -68,6 +72,11 @@ kotlin {
 
                 // Mobile Ads SDK
                 implementation("com.google.android.gms:play-services-ads:22.6.0")
+
+                // Koin
+                implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
+                implementation("io.insert-koin:koin-core")
+                implementation("io.insert-koin:koin-compose")
             }
         }
         val androidMain by getting {
@@ -76,6 +85,9 @@ kotlin {
                 api("androidx.activity:activity-compose:1.8.2")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.12.0")
+
+                implementation("io.insert-koin:koin-android:$koinVersion")
+                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
             }
         }
         val iosX64Main by getting

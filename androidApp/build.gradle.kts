@@ -12,9 +12,14 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 implementation("androidx.core:core-splashscreen:1.0.1")
+                implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
                 // Mobile Ads SDK
                 implementation("com.google.android.gms:play-services-ads:22.6.0")
+
+                // Koin
+                implementation(platform("io.insert-koin:koin-bom:3.5.3"))
+                implementation("io.insert-koin:koin-android")
             }
         }
     }
