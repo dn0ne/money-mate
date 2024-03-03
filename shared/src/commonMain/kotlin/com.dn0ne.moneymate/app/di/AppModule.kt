@@ -1,18 +1,17 @@
-package com.dn0ne.moneymate.app.data
+package com.dn0ne.moneymate.app.di
 
+import com.dn0ne.moneymate.app.data.repository.RealmSpendingRepository
 import com.dn0ne.moneymate.app.domain.entities.Category
 import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
 import com.dn0ne.moneymate.app.domain.entities.Spending
 import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
+import com.dn0ne.moneymate.app.presentation.SpendingListViewModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
+import org.koin.dsl.module
 
-/**
- * Data source provider object
- */
-object DatabaseModule {
-    val dataSource = provideDataSource()
-    private fun provideRealm(): Realm {
+val appModule = module {
+    single {
         // Creating Realm configuration
         val config = RealmConfiguration.Builder(
             schema = setOf(
@@ -23,10 +22,15 @@ object DatabaseModule {
         )
             .compactOnLaunch()
             .build()
-        return Realm.open(config)
+
+        Realm.open(config)
     }
 
-    private fun provideDataSource(): SpendingRepository {
-        return RealmSpendingRepository(provideRealm())
+    single<SpendingRepository> {
+        RealmSpendingRepository(get())
+    }
+
+    viewModelDefinition {
+        SpendingListViewModel(get())
     }
 }
