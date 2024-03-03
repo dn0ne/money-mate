@@ -1,3 +1,4 @@
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -16,7 +17,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import com.dn0ne.moneymate.app.data.DatabaseModule
 import com.dn0ne.moneymate.app.domain.enumerations.Theme
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListScreen
@@ -24,18 +24,22 @@ import com.dn0ne.moneymate.app.presentation.SpendingListViewModel
 import com.dn0ne.moneymate.core.presentation.MoneyMateTheme
 import dev.icerock.moko.mvvm.compose.getViewModel
 import dev.icerock.moko.mvvm.compose.viewModelFactory
+import org.koin.compose.koinInject
 
 @Composable
 fun App(
     darkTheme: Boolean,
-    dynamicColor: Boolean
+    dynamicColor: Boolean,
 ) {
     val viewModel = getViewModel(
         key = "spending-list-screen",
-        factory = viewModelFactory {
-            SpendingListViewModel(DatabaseModule.dataSource)
+        factory = koinInject<SpendingListViewModel>().let { injectedViewModel ->
+            viewModelFactory {
+                injectedViewModel
+            }
         }
     )
+
     val state by viewModel.state.collectAsState()
 
     val useDarkTheme =
@@ -110,6 +114,4 @@ fun App(
             }
         }
     }
-
-
 }
