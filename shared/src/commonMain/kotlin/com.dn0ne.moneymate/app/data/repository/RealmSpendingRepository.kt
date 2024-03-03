@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.data
+package com.dn0ne.moneymate.app.data.repository
 
 import com.dn0ne.moneymate.app.domain.entities.Category
 import com.dn0ne.moneymate.app.domain.entities.Spending
