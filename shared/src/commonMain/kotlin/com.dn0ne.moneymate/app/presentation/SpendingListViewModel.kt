@@ -4,12 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.validators.CategoryValidator
+import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.extensions.copy
 import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
 import com.dn0ne.moneymate.app.domain.settings.Settings
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.validators.CategoryValidator
 import com.dn0ne.moneymate.app.domain.validators.SpendingValidator
-import com.dn0ne.moneymate.app.domain.extensions.copy
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.delay
@@ -170,7 +170,6 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
 
             SpendingListEvent.SaveSpending -> {
                 newSpending?.let { spending ->
-                    println("SHOPPING LIST SIZE: ${spending.shoppingList.size}")
                     val result = SpendingValidator.validateSpending(spending)
                     val errors = listOfNotNull(
                         result.categoryError,
