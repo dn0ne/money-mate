@@ -1,9 +1,9 @@
 package com.dn0ne.moneymate.app.presentation
 
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import com.dn0ne.moneymate.app.domain.enumerations.BudgetPeriod
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
-import com.dn0ne.moneymate.app.domain.entities.Spending
 import com.dn0ne.moneymate.app.domain.enumerations.Theme
 
 /**
@@ -44,4 +44,13 @@ sealed interface SpendingListEvent {
     data object OnBudgetPeriodChangeDismiss: SpendingListEvent
     data object OnPeriodStartChangeClick: SpendingListEvent
     data object OnPeriodStartChangeDismiss: SpendingListEvent
+    data class OnEmailChanged(val value: String): SpendingListEvent
+    data class OnPasswordChanged(val value: String): SpendingListEvent
+    data object OnSignupClick: SpendingListEvent
+    data object OnLoginClick: SpendingListEvent
+    data object OnLogoutClick: SpendingListEvent
+    data object ConfirmSignup: SpendingListEvent
+    data object ConfirmLogin: SpendingListEvent
+    data object OnAuthBackCLick: SpendingListEvent
+    data object StartSync: SpendingListEvent
 }

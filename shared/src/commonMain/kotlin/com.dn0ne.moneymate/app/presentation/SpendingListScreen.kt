@@ -1,8 +1,14 @@
 package com.dn0ne.moneymate.app.presentation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -35,9 +41,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.PieChart
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -55,6 +64,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.buildAnnotatedString
@@ -63,23 +73,30 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
+import com.dn0ne.moneymate.app.domain.entities.user.User
 import com.dn0ne.moneymate.app.domain.extensions.safeSystemBarsAndDisplayCutoutPadding
+import com.dn0ne.moneymate.app.domain.extensions.toInstant
 import com.dn0ne.moneymate.app.domain.extensions.toLocalDate
 import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
 import com.dn0ne.moneymate.app.domain.extensions.today
-import com.dn0ne.moneymate.app.presentation.components.AddSpendingSheet
+import com.dn0ne.moneymate.app.domain.sync.SyncStatus
+import com.dn0ne.moneymate.app.domain.util.DateFormatter
 import com.dn0ne.moneymate.app.presentation.components.DotPageIndicator
-import com.dn0ne.moneymate.app.presentation.components.SettingsSheet
-import com.dn0ne.moneymate.app.presentation.components.SpendingDetailSheet
 import com.dn0ne.moneymate.app.presentation.components.SpendingListItem
-import com.dn0ne.moneymate.app.presentation.components.SummarySheet
+import com.dn0ne.moneymate.app.presentation.refresh.PullRefreshIndicator
+import com.dn0ne.moneymate.app.presentation.refresh.pullRefresh
+import com.dn0ne.moneymate.app.presentation.refresh.rememberPullRefreshState
+import com.dn0ne.moneymate.app.presentation.sheets.AddSpendingSheet
+import com.dn0ne.moneymate.app.presentation.sheets.AuthSheet
+import com.dn0ne.moneymate.app.presentation.sheets.SettingsSheet
+import com.dn0ne.moneymate.app.presentation.sheets.SpendingDetailSheet
+import com.dn0ne.moneymate.app.presentation.sheets.SummarySheet
 import com.dn0ne.moneymate.core.presentation.BackGestureHandler
 import com.dn0ne.moneymate.core.presentation.BannerAd
 import com.dn0ne.moneymate.core.presentation.ScrollUpButton
 import com.dn0ne.moneymate.core.presentation.animateTextStyleAsState
-import com.dn0ne.moneymate.app.domain.util.DateFormatter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -90,6 +107,7 @@ fun SpendingListScreen(
     state: SpendingListState,
     newSpending: Spending?,
     newCategory: Category?,
+    user: User?,
     onEvent: (SpendingListEvent) -> Unit
 ) {
     BackGestureHandler {
@@ -111,6 +129,14 @@ fun SpendingListScreen(
 
     val localDensity = LocalDensity.current
     val listState = rememberLazyListState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = false,
+        onRefresh = {
+            if (state.isUserLoggedIn) {
+                onEvent(SpendingListEvent.StartSync)
+            }
+        }
+    )
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         floatingActionButton = {
@@ -186,12 +212,12 @@ fun SpendingListScreen(
                     )
                 )
 
-                val filteredSpendings = if (state.settings.budgetAmount > 0f) {
+                val filteredSpendings = (if (state.appSettings.budgetAmount > 0f) {
                     state.spendings
                         .filter {
-                            it.spentAt.toLocalDate() in state.settings.periodStartDate..LocalDate.today()
+                            it.spentAt.toLocalDate() in state.appSettings.periodStartDate..LocalDate.today()
                         }
-                } else state.spendings
+                } else state.spendings).sortedByDescending { it.spentAt.toInstant() }
 
                 Column(
                     modifier = Modifier
@@ -242,11 +268,78 @@ fun SpendingListScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clip(RoundedCornerShape(28.dp, 28.dp)),
+                                .clip(RoundedCornerShape(28.dp, 28.dp))
+                                .let {
+                                    if (state.isUserLoggedIn) {
+                                        it.pullRefresh(
+                                            state = pullRefreshState
+                                        )
+                                    } else it
+                                },
                             state = listState,
                         ) {
                             item {
                                 Spacer(modifier = Modifier.height(topPanelHeight - panelButtonsHeight))
+                            }
+
+                            item {
+                                AnimatedVisibility(
+                                    visible = listState.firstVisibleItemIndex == 0
+                                            && state.isSyncingInProgress,
+                                    enter = expandVertically(),
+                                    exit = shrinkVertically()
+                                ) {
+                                        AnimatedContent(
+                                            targetState = state.syncStatus,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(88.dp)
+                                                .padding(horizontal = 16.dp)
+                                                .padding(bottom = 16.dp)
+                                                .clip(RoundedCornerShape(28.dp))
+                                                .background(listBackground)
+                                                .padding(horizontal = 16.dp)
+                                        ) {
+                                            val infiniteTransition = rememberInfiniteTransition()
+                                            val rotation by infiniteTransition.animateFloat(
+                                                initialValue = 180f,
+                                                targetValue = 0f,
+                                                animationSpec = infiniteRepeatable(
+                                                    animation = tween(
+                                                        durationMillis = 1000,
+                                                        easing = EaseInOut
+                                                    )
+                                                )
+                                            )
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                                modifier = Modifier.fillMaxSize()
+                                            ) {
+                                                Icon(
+                                                    imageVector = if (state.isSyncEndedWithError == null) Icons.Rounded.Sync
+                                                    else if (state.isSyncEndedWithError) Icons.Rounded.Error
+                                                    else Icons.Rounded.Done,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.let { modifier ->
+                                                        if(state.isSyncEndedWithError == null) {
+                                                            modifier.rotate(rotation)
+                                                        } else modifier
+                                                    }
+                                                )
+                                                Text(
+                                                    text = when(it) {
+                                                        is SyncStatus.Success -> stringResource(MR.strings.sync_done)
+                                                        SyncStatus.InProgress -> stringResource(MR.strings.sync_in_progress)
+                                                        SyncStatus.Timeout -> stringResource(MR.strings.sync_timeout)
+                                                        SyncStatus.NoNetwork -> stringResource(MR.strings.sync_no_network)
+                                                        else -> ""
+                                                    }
+                                                )
+
+                                            }
+                                        }
+                                }
                             }
 
                             item {
@@ -287,7 +380,8 @@ fun SpendingListScreen(
 
                                             Text(
                                                 text = buildAnnotatedString {
-                                                    val amount = spendings.map { it.amount }.sum().toStringWithScale(2)
+                                                    val amount = spendings.map { it.amount }.sum()
+                                                        .toStringWithScale(2)
                                                     withStyle(
                                                         style = MaterialTheme.typography.bodyMedium
                                                             .toSpanStyle()
@@ -357,7 +451,7 @@ fun SpendingListScreen(
                 )
 
                 val totalAmount = filteredSpendings.map { it.amount }.sum()
-                val remainingAmount = state.settings.budgetAmount - totalAmount
+                val remainingAmount = state.appSettings.budgetAmount - totalAmount
 
                 val totalAmountString = totalAmount.toStringWithScale(2)
                 val remainingAmountString = remainingAmount.toStringWithScale(2)
@@ -381,7 +475,13 @@ fun SpendingListScreen(
                         }
                 )
 
-
+                if (state.isUserLoggedIn) {
+                    PullRefreshIndicator(
+                        refreshing = state.isSyncingInProgress,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+                }
             }
         }
     }
@@ -393,6 +493,14 @@ fun SpendingListScreen(
         isOpen = state.isSettingsSheetOpen,
         onEvent = onEvent,
         maxContentWidth = maxWidth,
+    )
+
+    AuthSheet(
+        state = state,
+        user = user,
+        onEvent = onEvent,
+        isOpen = state.isAuthSheetOpen,
+        maxContentWidth = maxWidth
     )
 
     SummarySheet(
@@ -564,7 +672,7 @@ fun TopPanel(
                 } else MaterialTheme.typography.headlineLarge,
             )
 
-            val pageCount = if (state.settings.budgetAmount > 0f) 2 else 1
+            val pageCount = if (state.appSettings.budgetAmount > 0f) 2 else 1
             val pagerState = rememberPagerState { pageCount }
 
             HorizontalPager(

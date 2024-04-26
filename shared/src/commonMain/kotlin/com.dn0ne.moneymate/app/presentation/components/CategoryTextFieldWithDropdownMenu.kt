@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState

@@ -1,6 +1,6 @@
 package com.dn0ne.moneymate.app.domain.validators
 
-import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
 
 object CategoryValidator {
 

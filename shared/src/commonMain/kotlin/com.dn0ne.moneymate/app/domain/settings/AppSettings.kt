@@ -5,14 +5,15 @@ import com.dn0ne.moneymate.app.domain.enumerations.Theme
 import com.dn0ne.moneymate.app.domain.extensions.copy
 import com.dn0ne.moneymate.app.domain.extensions.getMonthDaysCount
 import com.dn0ne.moneymate.app.domain.extensions.today
+import com.russhwolf.settings.Settings
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
 
-class Settings() {
-    private val settings = com.russhwolf.settings.Settings()
+class AppSettings() {
+    private val settings = Settings()
 
     var theme: Theme
         get() = Theme.valueOf(settings.getString("theme", Theme.SYSTEM.name))
@@ -97,18 +98,28 @@ class Settings() {
             }
         }
 
+    var loggedInAs: String?
+        get() = settings.getStringOrNull("loggedInAs")
+        set(value) {
+            value?.let {
+                settings.putString("loggedInAs", it)
+            } ?: settings.remove("loggedInAs")
+        }
+
     constructor(
         theme: Theme = Theme.SYSTEM,
         dynamicColor: Boolean? = null,
         budgetAmount: Float = 0f,
         budgetPeriod: BudgetPeriod = BudgetPeriod.MONTH,
-        periodStart: Int = 0
+        periodStart: Int = 0,
+        loggedInAs: String? = null
     ) : this() {
         this.theme = theme
         this.dynamicColor = dynamicColor
         this.budgetAmount = budgetAmount
         this.budgetPeriod = budgetPeriod
         this.periodStart = periodStart
+        this.loggedInAs = loggedInAs
     }
 }
 

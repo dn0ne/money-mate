@@ -1,9 +1,11 @@
 package com.dn0ne.moneymate.app.presentation
 
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.settings.Settings
-import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
+import com.dn0ne.moneymate.app.domain.settings.AppSettings
+import com.dn0ne.moneymate.app.domain.sync.SyncStatus
+import com.dn0ne.moneymate.app.domain.validators.UserValidator
 import kotlinx.datetime.LocalDate
 
 /**
@@ -12,7 +14,7 @@ import kotlinx.datetime.LocalDate
 data class SpendingListState(
     val spendings: List<Spending> = emptyList(),
     val categories: List<Category> = emptyList(),
-    val settings: Settings = Settings(),
+    val appSettings: AppSettings = AppSettings(),
     val isDataLoaded: Boolean = false,
 
     val selectedSpending: Spending? = null,
@@ -39,4 +41,14 @@ data class SpendingListState(
     val showBudgetAmountChangeDialog: Boolean = false,
     val showBudgetPeriodChangeDialog: Boolean = false,
     val showPeriodStartChangeDialog: Boolean = false,
+
+    val isUserLoggedIn: Boolean = false,
+    val isSyncingInProgress: Boolean = false,
+    val isSyncEndedWithError: Boolean? = null,
+    val syncStatus: SyncStatus? = null,
+    val isAuthSheetOpen: Boolean = false,
+    val isAuthInProgress: Boolean = false,
+    val isLoggingIn: Boolean = true,
+    val emailError: UserValidator.ValidationError? = null,
+    val passwordError: UserValidator.ValidationError? = null,
 )

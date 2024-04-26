@@ -43,7 +43,7 @@ fun App(
     val state by viewModel.state.collectAsState()
 
     val useDarkTheme =
-        when (state.settings.theme) {
+        when (state.appSettings.theme) {
             Theme.LIGHT -> false
             Theme.DARK -> true
             Theme.SYSTEM -> darkTheme
@@ -54,7 +54,7 @@ fun App(
         if (!dynamicColor) {
             false
         } else {
-            state.settings.dynamicColor ?: run {
+            state.appSettings.dynamicColor ?: run {
                 viewModel.onEvent(
                     SpendingListEvent.OnDynamicColorChanged(true)
                 )
@@ -75,6 +75,7 @@ fun App(
                 state = state,
                 newSpending = viewModel.newSpending,
                 newCategory = viewModel.newCategory,
+                user = viewModel.user,
                 onEvent = viewModel::onEvent,
             )
 

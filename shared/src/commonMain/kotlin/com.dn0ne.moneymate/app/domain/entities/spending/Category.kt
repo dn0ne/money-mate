@@ -1,9 +1,10 @@
-package com.dn0ne.moneymate.app.domain.entities
+package com.dn0ne.moneymate.app.domain.entities.spending
 
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlinx.serialization.Serializable
 import org.mongodb.kbson.ObjectId
 
 /**
@@ -12,6 +13,7 @@ import org.mongodb.kbson.ObjectId
  * @property name Category name (by default - empty string)
  * @property iconName Category icon name, taken from [CategoryIcons] (by default - empty string)
  */
+@Serializable
 class Category(): RealmObject {
     @PrimaryKey var id = ObjectId.invoke()
     @Index var name: String = ""

@@ -1,6 +1,6 @@
 package com.dn0ne.moneymate.app.domain.extensions
 
-import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.spending.ShoppingItem
 
 fun ShoppingItem.copy(
     name: String = this.name,

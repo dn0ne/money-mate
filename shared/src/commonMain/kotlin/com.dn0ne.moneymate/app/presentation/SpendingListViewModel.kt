@@ -3,13 +3,17 @@ package com.dn0ne.moneymate.app.presentation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
+import com.dn0ne.moneymate.app.domain.entities.user.User
 import com.dn0ne.moneymate.app.domain.extensions.copy
 import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
-import com.dn0ne.moneymate.app.domain.settings.Settings
+import com.dn0ne.moneymate.app.domain.settings.AppSettings
+import com.dn0ne.moneymate.app.domain.sync.SyncService
+import com.dn0ne.moneymate.app.domain.sync.SyncStatus
 import com.dn0ne.moneymate.app.domain.validators.CategoryValidator
 import com.dn0ne.moneymate.app.domain.validators.SpendingValidator
+import com.dn0ne.moneymate.app.domain.validators.UserValidator
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.delay
@@ -23,25 +27,46 @@ import kotlinx.coroutines.launch
 /**
  * App view model class
  */
-class SpendingListViewModel(private val spendingRepository: SpendingRepository) : ViewModel() {
+class SpendingListViewModel(
+    private val repository: SpendingRepository,
+    private val syncService: SyncService
+) : ViewModel() {
 
-    private val _settings = MutableStateFlow(Settings())
+    private val _appSettings = MutableStateFlow(AppSettings())
     private val _state = MutableStateFlow(SpendingListState())
     val state = combine(
-        _state, spendingRepository.getSpendings(), spendingRepository.getCategories(), _settings
+        _state, repository.getSpendings(), repository.getCategories(), _appSettings
     ) { state, spendings, categories, settings ->
         state.copy(
             spendings = spendings,
             categories = categories,
-            settings = settings,
+            appSettings = settings,
             isDataLoaded = true
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SpendingListState())
+
+    init {
+        _state.update {
+            it.copy(
+                isUserLoggedIn = syncService.isLoggedIn
+            )
+        }
+
+        if (syncService.isLoggedIn) {
+            viewModelScope.launch {
+                delay(1000)
+                startSync()
+            }
+        }
+    }
 
     var newSpending: Spending? by mutableStateOf(null)
         private set
 
     var newCategory: Category? by mutableStateOf(null)
+        private set
+
+    var user: User? by mutableStateOf(null)
         private set
 
     fun onEvent(event: SpendingListEvent) {
@@ -55,7 +80,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                             )
                         }
 
-                        spendingRepository.deleteSpending(id)
+                        repository.deleteSpending(id)
                         delay(300L) // Animation delay
                         _state.update {
                             it.copy(
@@ -131,10 +156,12 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                     amount = event.value
                 )
 
-                _state.update {
-                    it.copy(
-                        amountError = null
-                    )
+                _state.value.amountError?.let {
+                    _state.update {
+                        it.copy(
+                            amountError = null
+                        )
+                    }
                 }
             }
 
@@ -143,10 +170,12 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                     category = event.value
                 )
 
-                _state.update {
-                    it.copy(
-                        categoryError = null
-                    )
+                _state.value.categoryError?.let {
+                    _state.update {
+                        it.copy(
+                            categoryError = null
+                        )
+                    }
                 }
             }
 
@@ -161,10 +190,12 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                     shortDescription = event.value
                 )
 
-                _state.update {
-                    it.copy(
-                        shortDescriptionError = null
-                    )
+                _state.value.shortDescriptionError?.let {
+                    _state.update {
+                        it.copy(
+                            shortDescriptionError = null
+                        )
+                    }
                 }
             }
 
@@ -192,9 +223,9 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
 
                         viewModelScope.launch {
                             if (state.value.spendings.any { it.id == spending.id }) {
-                                spendingRepository.updateSpending(spending)
+                                repository.updateSpending(spending)
                             } else {
-                                spendingRepository.insertSpending(spending)
+                                repository.insertSpending(spending)
                             }
                             delay(300L) // Animation delay
                             newSpending = null
@@ -246,7 +277,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                             )
                         }
 
-                        spendingRepository.deleteCategory(id)
+                        repository.deleteCategory(id)
                         newCategory = null
                     }
                 }
@@ -278,10 +309,12 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                     iconName = event.value
                 )
 
-                _state.update {
-                    it.copy(
-                        categoryIconNameError = null
-                    )
+                _state.value.categoryIconNameError?.let {
+                    _state.update {
+                        it.copy(
+                            categoryIconNameError = null
+                        )
+                    }
                 }
             }
 
@@ -290,10 +323,12 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                     name = event.value
                 )
 
-                _state.update {
-                    it.copy(
-                        categoryNameError = null
-                    )
+                _state.value.categoryNameError?.let {
+                    _state.update {
+                        it.copy(
+                            categoryNameError = null
+                        )
+                    }
                 }
             }
 
@@ -320,9 +355,9 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
 
                         viewModelScope.launch {
                             if (state.value.categories.any { it.id == category.id }) {
-                                spendingRepository.updateCategory(category)
+                                repository.updateCategory(category)
                             } else {
-                                spendingRepository.insertCategory(category)
+                                repository.insertCategory(category)
                             }
                             newCategory = null
                         }
@@ -355,7 +390,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
             }
 
             is SpendingListEvent.OnThemeChanged -> {
-                _settings.update {
+                _appSettings.update {
                     it.copy(
                         theme = event.theme
                     )
@@ -363,7 +398,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
             }
 
             is SpendingListEvent.OnDynamicColorChanged -> {
-                _settings.update {
+                _appSettings.update {
                     it.copy(
                         dynamicColor = event.dynamicColor
                     )
@@ -387,7 +422,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
             }
 
             is SpendingListEvent.OnBudgetAmountChanged -> {
-                _settings.update {
+                _appSettings.update {
                     it.copy(
                         budgetAmount = event.value
                     )
@@ -417,7 +452,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
             }
 
             is SpendingListEvent.OnBudgetPeriodChanged -> {
-                _settings.update {
+                _appSettings.update {
                     it.copy(
                         budgetPeriod = event.value
                     )
@@ -447,7 +482,7 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
             }
 
             is SpendingListEvent.OnBudgetPeriodStartChanged -> {
-                _settings.update {
+                _appSettings.update {
                     it.copy(
                         periodStart = event.value
                     )
@@ -456,6 +491,245 @@ class SpendingListViewModel(private val spendingRepository: SpendingRepository) 
                 _state.update {
                     it.copy(
                         showPeriodStartChangeDialog = false
+                    )
+                }
+            }
+
+            SpendingListEvent.OnAuthBackCLick -> {
+                user = null
+                _state.update {
+                    it.copy(
+                        isAuthSheetOpen = false,
+                        emailError = null,
+                        passwordError = null,
+                        syncStatus = null
+                    )
+                }
+            }
+
+            SpendingListEvent.OnLoginClick -> {
+                if (user == null) {
+                    user = User()
+                }
+                _state.update {
+                    it.copy(
+                        isAuthSheetOpen = true,
+                        isLoggingIn = true,
+                        syncStatus = null
+                    )
+                }
+            }
+
+            SpendingListEvent.OnSignupClick -> {
+                if (user == null) {
+                    user = User()
+                }
+                _state.update {
+                    it.copy(
+                        isAuthSheetOpen = true,
+                        isLoggingIn = false,
+                        syncStatus = null
+                    )
+                }
+            }
+
+            SpendingListEvent.OnLogoutClick -> {
+                syncService.forgetUser()
+                _state.update {
+                    it.copy(
+                        isUserLoggedIn = syncService.isLoggedIn
+                    )
+                }
+            }
+
+            is SpendingListEvent.OnEmailChanged -> {
+                user = user?.copy(
+                    email = event.value
+                )
+
+                _state.value.emailError?.let {
+                    _state.update {
+                        it.copy(
+                            emailError = null
+                        )
+                    }
+                }
+            }
+            is SpendingListEvent.OnPasswordChanged -> {
+                user = user?.copy(
+                    password = event.value
+                )
+
+                _state.value.passwordError?.let {
+                    _state.update {
+                        it.copy(
+                            passwordError = null
+                        )
+                    }
+                }
+            }
+
+            SpendingListEvent.ConfirmLogin -> {
+                user?.let { logInUser ->
+                    val result = UserValidator.validateUser(logInUser)
+                    val errors = listOfNotNull(
+                        result.emailError,
+                        result.passwordError
+                    )
+
+                    if (errors.isEmpty()) {
+                        viewModelScope.launch {
+                            _state.update {
+                                it.copy(
+                                    isAuthInProgress = true
+                                )
+                            }
+
+                            val syncStatus = syncService.login(user)
+                            syncStatus?.let { status ->
+                                _state.update {
+                                    it.copy(
+                                        syncStatus = status,
+                                        isAuthInProgress = false
+                                    )
+                                }
+                            } ?: run {
+                                _state.update {
+                                    it.copy(
+                                        isUserLoggedIn = syncService.isLoggedIn,
+                                        isAuthSheetOpen = false,
+                                        isAuthInProgress = false,
+                                        syncStatus = null
+                                    )
+                                }
+
+                                if (syncService.isLoggedIn) {
+                                    _appSettings.update {
+                                        it.copy(
+                                            loggedInAs = logInUser.email
+                                        )
+                                    }
+
+                                    startSync()
+                                }
+
+                                user = null
+                            }
+
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                emailError = result.emailError,
+                                passwordError = result.passwordError
+                            )
+                        }
+                    }
+                }
+
+            }
+            SpendingListEvent.ConfirmSignup -> {
+                user?.let { signUpUser ->
+                    val result = UserValidator.validateUser(signUpUser)
+                    val errors = listOfNotNull(
+                        result.emailError,
+                        result.passwordError
+                    )
+
+                    if (errors.isEmpty()) {
+                        viewModelScope.launch {
+                            _state.update {
+                                it.copy(
+                                    isAuthInProgress = true
+                                )
+                            }
+
+                            val syncStatus = syncService.signup(signUpUser)
+                            syncStatus?.let { status ->
+                                _state.update {
+                                    it.copy(
+                                        syncStatus = status,
+                                        isAuthInProgress = false
+                                    )
+                                }
+                            } ?: run {
+                                _state.update {
+                                    it.copy(
+                                        isUserLoggedIn = syncService.isLoggedIn,
+                                        isAuthSheetOpen = false,
+                                        isAuthInProgress = false,
+                                        syncStatus = null
+                                    )
+                                }
+
+                                if (syncService.isLoggedIn) {
+                                    _appSettings.update {
+                                        it.copy(
+                                            loggedInAs = signUpUser.email
+                                        )
+                                    }
+
+                                    startSync()
+                                }
+
+                                user = null
+                            }
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                emailError = result.emailError,
+                                passwordError = result.passwordError
+                            )
+                        }
+                    }
+                }
+            }
+
+            SpendingListEvent.StartSync -> {
+                startSync()
+            }
+        }
+    }
+
+    override fun onCleared() {
+        viewModelScope.launch {
+            startSync()
+            super.onCleared()
+        }
+    }
+
+    private fun startSync() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isSyncingInProgress = true,
+                    isSyncEndedWithError = null,
+                    syncStatus = SyncStatus.InProgress
+                )
+            }
+
+            val error = syncService.syncChanges()
+
+            error?.let { status ->
+                _state.update {
+                    it.copy(
+                        syncStatus = status,
+                        isSyncEndedWithError = true
+                    )
+                }
+            } ?: run {
+                _state.update {
+                    it.copy(
+                        syncStatus = SyncStatus.Success(),
+                        isSyncEndedWithError = false
+                    )
+                }
+                delay(1000)
+
+                _state.update {
+                    it.copy(
+                        isSyncingInProgress = false
                     )
                 }
             }

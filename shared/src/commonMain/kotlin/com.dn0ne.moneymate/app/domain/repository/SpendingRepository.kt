@@ -1,7 +1,7 @@
 package com.dn0ne.moneymate.app.domain.repository
 
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import kotlinx.coroutines.flow.Flow
 import org.mongodb.kbson.ObjectId
 

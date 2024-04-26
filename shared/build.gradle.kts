@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose")
     id("dev.icerock.mobile.multiplatform-resources")
     id("io.realm.kotlin") version "1.13.0"
+    kotlin("plugin.serialization") version "1.9.10"
 }
 
 val mokoResourcesVersion = extra["moko.resources.version"] as String
@@ -14,6 +15,7 @@ val kotlinxCoroutinesVersion = extra["kotlinx.coroutines.version"] as String
 val realmVersion = extra["realm.version"] as String
 val settingsVersion = extra["settings.version"] as String
 val koinVersion = extra["koin.version"] as String
+val ktorVersion = extra["ktor.version"] as String
 
 kotlin {
     androidTarget()
@@ -71,12 +73,20 @@ kotlin {
                 implementation("com.russhwolf:multiplatform-settings-coroutines:$settingsVersion")
 
                 // Mobile Ads SDK
-                implementation("com.google.android.gms:play-services-ads:22.6.0")
+                implementation("com.google.android.gms:play-services-ads:23.0.0")
 
                 // Koin
                 implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
                 implementation("io.insert-koin:koin-core")
                 implementation("io.insert-koin:koin-compose")
+
+                // Ktor
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-encoding:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("org.slf4j:slf4j-simple:2.0.12")
             }
         }
         val androidMain by getting {
@@ -86,8 +96,12 @@ kotlin {
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.12.0")
 
+                // Koin
                 implementation("io.insert-koin:koin-android:$koinVersion")
                 implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+
+                // Ktor
+                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             }
         }
         val iosX64Main by getting
@@ -98,6 +112,11 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                // Ktor
+                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+            }
         }
     }
 }

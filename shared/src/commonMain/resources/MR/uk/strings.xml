@@ -150,4 +150,29 @@
     <string name="category_name_error">Будь ласка, дайте назву категорії.</string>
     <string name="category_icon_error">Будь ласка, оберіть позначку.</string>
 
+    <!-- Sync Strings -->
+    <string name="sync_done">Синхронізація пройшла успішно</string>
+    <string name="sync_in_progress">Синхронізація з хмарою...</string>
+    <string name="sync_timeout">Сервер зараз спить і не може відповісти. Будь ласка, спробуйте пізніше.</string>
+    <string name="sync_no_network">Здається, немає з\'єднання з мережею.</string>
+    <string name="sync_incorrect_username_or_password">Ця комбінація адреси електронної пошти та пароля є неправильною.</string>
+    <string name="sync_user_already_exists">Користувач з такою адресою вже існує.</string>
+    <string name="sync_invalid_user_data">Невірні дані користувача.</string>
+    <string name="sync_unknown_error_while_signing_up">Під час реєстрації виникла помилка, з якою ми ще не стикалися. Спробуйте пізніше або надішліть звіт.</string>
+
+    <!-- Account and Auth Strings -->
+    <string name="account">Акаунт</string>
+    <string name="log_in">Вхід</string>
+    <string name="log_out">Вийти</string>
+    <string name="logging_in">Входимо в акаунт</string>
+    <string name="logged_in_as">Ви увійшли як</string>
+    <string name="sign_up">Реєстрація</string>
+    <string name="signing_up">Реєструємо</string>
+    <string name="email">Пошта</string>
+    <string name="password">Пароль</string>
+    <string name="blank_email">Будь ласка, введіть електронну адресу.</string>
+    <string name="blank_password">Будь ласка, введіть пароль.</string>
+    <string name="incorrect_email">Будь ласка, перевірте правильність адреси електронної пошти.</string>
+    <string name="incorrect_password">Пароль повинен містити від 8 до 20 символів і не містити пробілів.</string>
+
 </resources>

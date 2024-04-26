@@ -149,6 +149,31 @@
     <string name="category_name_error">Please name the category.</string>
     <string name="category_icon_error">Please pick an icon.</string>
 
+    <!-- Sync Strings -->
+    <string name="sync_done">Synced successfully</string>
+    <string name="sync_in_progress">Syncing with cloud...</string>
+    <string name="sync_timeout">Server is sleepy right now and can\'t respond. Please try again later.</string>
+    <string name="sync_no_network">There appears to be no network connection.</string>
+    <string name="sync_incorrect_username_or_password">This email and password combination is incorrect.</string>
+    <string name="sync_user_already_exists">User with this email already exists.</string>
+    <string name="sync_invalid_user_data">Invalid user data.</string>
+    <string name="sync_unknown_error_while_signing_up">There was an error during signing up that we have not encountered yet. Try again later or send a report.</string>
+
+    <!-- Account and Auth Strings -->
+    <string name="account">Account</string>
+    <string name="log_in">Log in</string>
+    <string name="log_out">Log out</string>
+    <string name="logging_in">Logging in</string>
+    <string name="logged_in_as">Logged in as</string>
+    <string name="sign_up">Sign up</string>
+    <string name="signing_up">Signing up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="blank_email">Please enter the email.</string>
+    <string name="blank_password">Please enter the password.</string>
+    <string name="incorrect_email">Please make sure email is correct.</string>
+    <string name="incorrect_password">Password must be 8 to 20 characters long and not contain whitespace.</string>
+
     <!-- Ad Strings -->
     <string name="ad">ca-app-pub-9191812901943784/5035891565</string>
 </resources>

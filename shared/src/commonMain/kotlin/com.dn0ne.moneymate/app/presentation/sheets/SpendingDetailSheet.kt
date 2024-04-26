@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.presentation.components
+package com.dn0ne.moneymate.app.presentation.sheets
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -45,13 +45,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import com.dn0ne.moneymate.app.domain.extensions.toLocalDate
 import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
 import com.dn0ne.moneymate.app.domain.util.DateFormatter
+import com.dn0ne.moneymate.app.presentation.components.CollapsingTopAppBar
 import dev.icerock.moko.resources.compose.stringResource
 import kotlin.math.roundToInt
 

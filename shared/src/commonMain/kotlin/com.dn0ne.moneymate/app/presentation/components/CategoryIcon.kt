@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.dn0ne.moneymate.app.domain.entities.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 
 @Composable

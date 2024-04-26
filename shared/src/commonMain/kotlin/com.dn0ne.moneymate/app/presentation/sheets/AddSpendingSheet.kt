@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.presentation.components
+package com.dn0ne.moneymate.app.presentation.sheets
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -53,14 +53,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.ShoppingItem
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.ShoppingItem
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import com.dn0ne.moneymate.app.domain.extensions.copy
+import com.dn0ne.moneymate.app.domain.util.DecimalFormatter
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState
+import com.dn0ne.moneymate.app.presentation.components.CategoryTextFieldWithDropdownMenu
+import com.dn0ne.moneymate.app.presentation.components.CollapsingTopAppBar
+import com.dn0ne.moneymate.app.presentation.components.SegmentedButton
+import com.dn0ne.moneymate.app.presentation.components.ShoppingListItem
+import com.dn0ne.moneymate.app.presentation.components.ShoppingListTitles
+import com.dn0ne.moneymate.app.presentation.components.SpendingTextField
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
-import com.dn0ne.moneymate.app.domain.util.DecimalFormatter
 import dev.icerock.moko.resources.compose.stringResource
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.delay

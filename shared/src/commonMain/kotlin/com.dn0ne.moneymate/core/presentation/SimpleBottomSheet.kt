@@ -16,6 +16,7 @@ import com.dn0ne.moneymate.app.domain.extensions.safeSystemBarsAndDisplayCutoutP
 fun SimpleBottomSheet(
     visible: Boolean,
     modifier: Modifier = Modifier,
+    enableSafePadding: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     AnimatedVisibility(
@@ -28,7 +29,9 @@ fun SimpleBottomSheet(
             animationSpec = tween(300),
             targetOffsetY = { it }
         ),
-        modifier = Modifier.safeSystemBarsAndDisplayCutoutPadding()
+        modifier = if (enableSafePadding) {
+            Modifier.safeSystemBarsAndDisplayCutoutPadding()
+        } else Modifier
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.presentation.components
+package com.dn0ne.moneymate.app.presentation.sheets
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -66,17 +66,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dn0ne.moneymate.MR
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import com.dn0ne.moneymate.app.domain.extensions.toLocalDate
 import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
 import com.dn0ne.moneymate.app.domain.extensions.today
+import com.dn0ne.moneymate.app.domain.util.DateFormatter
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState
+import com.dn0ne.moneymate.app.presentation.components.CollapsingTopAppBar
+import com.dn0ne.moneymate.app.presentation.components.DotPageIndicator
+import com.dn0ne.moneymate.app.presentation.components.SpendingListItem
 import com.dn0ne.moneymate.core.presentation.ScrollUpButton
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
 import com.dn0ne.moneymate.core.presentation.SimpleDateRangePicker
-import com.dn0ne.moneymate.app.domain.util.DateFormatter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -115,7 +118,7 @@ fun SummarySheet(
         }
         val initialSelectedStartDateMillis by remember {
             mutableStateOf(
-                state.settings.periodStartDate
+                state.appSettings.periodStartDate
                     .atStartOfDayIn(TimeZone.UTC)
                     .toEpochMilliseconds()
             )

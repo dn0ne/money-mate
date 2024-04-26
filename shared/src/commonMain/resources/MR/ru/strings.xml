@@ -150,4 +150,29 @@
     <string name="category_name_error">Пожалуйста, назовите категорию.</string>
     <string name="category_icon_error">Пожалуйста, выберите значёк.</string>
 
+    <!-- Sync Strings -->
+    <string name="sync_done">Синхронизация прошла успешно.</string>
+    <string name="sync_in_progress">Синхронизация с облаком...</string>
+    <string name="sync_timeout">Сервер сейчас спит и не может ответить. Пожалуйста, повторите попытку позже.</string>
+    <string name="sync_no_network">Похоже отсутствует сетевое соединение.</string>
+    <string name="sync_incorrect_username_or_password">Эта комбинация электронной почты и пароля неверна.</string>
+    <string name="sync_user_already_exists">Пользователь с такой электронной почтой уже существует.</string>
+    <string name="sync_invalid_user_data">Недопустимые данные пользователя.</string>
+    <string name="sync_unknown_error_while_signing_up">При регистрации произошла ошибка, с которой мы еще не сталкивались. Повторите попытку позже или отправьте отчет.</string>
+
+    <!-- Account and Auth Strings -->
+    <string name="account">Аккаунт</string>
+    <string name="log_in">Вход</string>
+    <string name="log_out">Выйти</string>
+    <string name="logging_in">Входим в акаунт</string>
+    <string name="logged_in_as">Вы вошли как</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="signing_up">Регистрируем</string>
+    <string name="email">Почта</string>
+    <string name="password">Пароль</string>
+    <string name="blank_email">Пожалуйста, введите адрес электронной почты.</string>
+    <string name="blank_password">Пожалуйста, введите пароль.</string>
+    <string name="incorrect_email">Пожалуйста, убедитесь, что электронная почта указана правильно.</string>
+    <string name="incorrect_password">Пароль должен состоять из 8-20 символов и не содержать пробелов.</string>
+
 </resources>

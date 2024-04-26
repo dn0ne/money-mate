@@ -1,7 +1,7 @@
 package com.dn0ne.moneymate.app.data.repository
 
-import com.dn0ne.moneymate.app.domain.entities.Category
-import com.dn0ne.moneymate.app.domain.entities.Spending
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
+import com.dn0ne.moneymate.app.domain.entities.spending.Spending
 import com.dn0ne.moneymate.app.domain.repository.SpendingRepository
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
@@ -21,22 +21,36 @@ class RealmSpendingRepository(private val realm: Realm) : SpendingRepository {
 
     override suspend fun insertSpending(spending: Spending) {
         realm.write {
-            spending.category = findLatest(spending.category!!)
-            copyToRealm(instance = spending)
+            val queriedCategory = spending.category?.let {
+                realm.query<Category>(query = "id == $0", it.id).first().find()
+            }
+
+            queriedCategory?.let { category ->
+                spending.category = findLatest(category)
+                copyToRealm(instance = spending)
+            }
         }
     }
 
     override suspend fun updateSpending(spending: Spending) {
         realm.write {
-            val queriedSpending = findLatest(
-                realm.query<Spending>(query = "id == $0", spending.id).first().find()!!
-            )
+            val queriedSpending = realm.query<Spending>(
+                query = "id == $0", spending.id
+            ).first().find()?.let { spending ->
+                findLatest(spending)
+            }
 
-            queriedSpending?.apply {
-                category = findLatest(spending.category!!)
-                amount = spending.amount
-                shortDescription = spending.shortDescription
-                shoppingList = spending.shoppingList
+            val queriedCategory = realm.query<Category>(
+                query = "id == $0", spending.category!!.id
+            ).first().find()
+
+            queriedCategory?.let { category ->
+                queriedSpending?.apply {
+                    this.category = findLatest(category)
+                    amount = spending.amount
+                    shortDescription = spending.shortDescription
+                    shoppingList = spending.shoppingList
+                }
             }
         }
     }
@@ -45,7 +59,7 @@ class RealmSpendingRepository(private val realm: Realm) : SpendingRepository {
         realm.write {
             val queriedSpending = query<Spending>(query = "id == $0", id).first().find()
             try {
-                queriedSpending?.let { delete(it) }
+                queriedSpending?.let { spending -> delete(spending) }
             } catch (e: IllegalArgumentException) {
                 println("REALM ERROR: spending to be deleted not found")
             }
@@ -64,9 +78,11 @@ class RealmSpendingRepository(private val realm: Realm) : SpendingRepository {
 
     override suspend fun updateCategory(category: Category) {
         realm.write {
-            val queriedCategory = findLatest(
-                realm.query<Category>(query = "id == $0", category.id).first().find()!!
-            )
+            val queriedCategory = realm.query<Category>(
+                query = "id == $0", category.id
+            ).first().find()?.let { category ->
+                findLatest(category)
+            }
 
             queriedCategory?.apply {
                 name = category.name

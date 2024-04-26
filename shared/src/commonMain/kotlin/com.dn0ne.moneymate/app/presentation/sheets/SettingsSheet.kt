@@ -1,4 +1,4 @@
-package com.dn0ne.moneymate.app.presentation.components
+package com.dn0ne.moneymate.app.presentation.sheets
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -33,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountBalanceWallet
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowBackIos
 import androidx.compose.material.icons.rounded.CalendarMonth
@@ -42,6 +43,9 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.EventRepeat
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Login
+import androidx.compose.material.icons.rounded.Logout
+import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.QuestionAnswer
 import androidx.compose.material.icons.rounded.ReportProblem
 import androidx.compose.material.icons.rounded.TipsAndUpdates
@@ -81,18 +85,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dn0ne.moneymate.MR
+import com.dn0ne.moneymate.app.domain.entities.spending.Category
 import com.dn0ne.moneymate.app.domain.enumerations.BudgetPeriod
-import com.dn0ne.moneymate.app.domain.entities.Category
 import com.dn0ne.moneymate.app.domain.enumerations.Theme
 import com.dn0ne.moneymate.app.domain.extensions.toStringWithScale
+import com.dn0ne.moneymate.app.domain.util.DateFormatter
+import com.dn0ne.moneymate.app.domain.util.DecimalFormatter
 import com.dn0ne.moneymate.app.presentation.CategoryIcons
 import com.dn0ne.moneymate.app.presentation.SpendingListEvent
 import com.dn0ne.moneymate.app.presentation.SpendingListState
+import com.dn0ne.moneymate.app.presentation.components.AddCategoryDialog
+import com.dn0ne.moneymate.app.presentation.components.CollapsingTopAppBar
+import com.dn0ne.moneymate.app.presentation.components.SettingsItem
+import com.dn0ne.moneymate.app.presentation.components.SpendingTextField
 import com.dn0ne.moneymate.core.presentation.BackGestureHandler
 import com.dn0ne.moneymate.core.presentation.SimpleBottomSheet
 import com.dn0ne.moneymate.core.presentation.SimpleDialog
-import com.dn0ne.moneymate.app.domain.util.DateFormatter
-import com.dn0ne.moneymate.app.domain.util.DecimalFormatter
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -276,6 +284,28 @@ fun SettingsSheet(
                             )
 
                             SettingsItem(
+                                itemName = stringResource(MR.strings.account),
+                                icon = Icons.Rounded.AccountCircle,
+                                onClick = {
+                                    settingsPage = SettingsPage.ACCOUNT
+                                }
+                            )
+
+                            Divider(
+                                color = dividerColor,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            )
+
+                            Divider(
+                                color = dividerColor,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            )
+
+                            SettingsItem(
                                 itemName = stringResource(MR.strings.feedback),
                                 icon = Icons.Rounded.QuestionAnswer,
                                 onClick = {
@@ -390,7 +420,9 @@ fun SettingsSheet(
 
                             SettingsItem(
                                 itemName = stringResource(MR.strings.amount),
-                                supportingString = state.settings.budgetAmount.toStringWithScale(2),
+                                supportingString = state.appSettings.budgetAmount.toStringWithScale(
+                                    2
+                                ),
                                 icon = Icons.Rounded.AccountBalanceWallet,
                                 onClick = {
                                     onEvent(SpendingListEvent.OnBudgetAmountChangeClick)
@@ -416,7 +448,7 @@ fun SettingsSheet(
 
                             SettingsItem(
                                 itemName = stringResource(MR.strings.period),
-                                supportingString = state.settings.budgetPeriod.localizedName,
+                                supportingString = state.appSettings.budgetPeriod.localizedName,
                                 icon = Icons.Rounded.CalendarMonth,
                                 onClick = {
                                     onEvent(SpendingListEvent.OnBudgetPeriodChangeClick)
@@ -424,7 +456,7 @@ fun SettingsSheet(
                             )
 
                             AnimatedVisibility(
-                                visible = state.settings.budgetPeriod != BudgetPeriod.DAY,
+                                visible = state.appSettings.budgetPeriod != BudgetPeriod.DAY,
                                 enter = expandVertically() + fadeIn(),
                                 exit = shrinkVertically() + fadeOut()
                             ) {
@@ -447,13 +479,13 @@ fun SettingsSheet(
 
                                 SettingsItem(
                                     itemName = stringResource(MR.strings.first_day),
-                                    supportingString = when (state.settings.budgetPeriod) {
+                                    supportingString = when (state.appSettings.budgetPeriod) {
                                         BudgetPeriod.MONTH -> {
-                                            (state.settings.periodStart + 1).toString()
+                                            (state.appSettings.periodStart + 1).toString()
                                         }
 
                                         BudgetPeriod.WEEK -> {
-                                            DateFormatter.dayOfWeekLocalized(DayOfWeek.values()[state.settings.periodStart])
+                                            DateFormatter.dayOfWeekLocalized(DayOfWeek.entries[state.appSettings.periodStart])
                                         }
 
                                         else -> ""
@@ -464,6 +496,110 @@ fun SettingsSheet(
                                     }
                                 )
                             }
+                        }
+
+                        SettingsPage.ACCOUNT -> {
+                            topBarTitle = stringResource(MR.strings.account)
+                            onBackClick = {
+                                settingsPage = SettingsPage.SETTINGS
+                            }
+
+                            AnimatedContent(
+                                targetState = state.isUserLoggedIn
+                            ) { isLoggedIn ->
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                ) {
+                                    if (isLoggedIn) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(72.dp)
+                                                .clip(RoundedCornerShape(28.dp))
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                                        5.dp
+                                                    )
+                                                )
+                                                .padding(horizontal = 16.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.AccountCircle,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(48.dp)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = stringResource(MR.strings.logged_in_as),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                                Text(
+                                                    text = state.appSettings.loggedInAs ?: "",
+                                                    style = MaterialTheme.typography.titleLarge,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            }
+                                        }
+                                        OutlinedButton(
+                                            onClick = {
+                                                onEvent(SpendingListEvent.OnLogoutClick)
+                                            },
+                                            shape = RoundedCornerShape(28.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(72.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Logout,
+                                                contentDescription = null
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(text = stringResource(MR.strings.log_out))
+                                        }
+                                    } else {
+                                        Button(
+                                            onClick = {
+                                                onEvent(SpendingListEvent.OnLoginClick)
+                                            },
+                                            shape = RoundedCornerShape(28.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(72.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Login,
+                                                contentDescription = null
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(text = stringResource(MR.strings.log_in))
+                                        }
+
+                                        FilledTonalButton(
+                                            onClick = {
+                                                onEvent(SpendingListEvent.OnSignupClick)
+                                            },
+                                            shape = RoundedCornerShape(28.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(72.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.PersonAdd,
+                                                contentDescription = null
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(text = stringResource(MR.strings.sign_up))
+                                        }
+                                    }
+                                }
+                            }
+
                         }
 
                         SettingsPage.FEEDBACK -> {
@@ -588,7 +724,7 @@ fun ThemeDialog(
 
         var selectedIndex by remember {
             mutableStateOf(
-                state.settings.theme.ordinal
+                state.appSettings.theme.ordinal
             )
         }
         Theme.entries.forEachIndexed { index, theme ->
@@ -618,7 +754,7 @@ fun ThemeDialog(
 
         var useDynamicColor by remember {
             mutableStateOf(
-                state.settings.dynamicColor
+                state.appSettings.dynamicColor
             )
         }
 
@@ -817,7 +953,7 @@ fun ChangeBudgetAmountDialog(
         onDismissRequest = onDismissRequest,
         modifier = Modifier.padding(horizontal = 28.dp, vertical = 16.dp)
     ) {
-        Box (
+        Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -856,7 +992,7 @@ fun ChangeBudgetAmountDialog(
 
         var amount by remember {
             mutableStateOf(
-                state.settings.budgetAmount.toString()
+                state.appSettings.budgetAmount.toString()
             )
         }
 
@@ -924,7 +1060,7 @@ fun ChangeBudgetPeriodDialog(
 
         var selectedIndex by remember {
             mutableStateOf(
-                state.settings.budgetPeriod.ordinal
+                state.appSettings.budgetPeriod.ordinal
             )
         }
         BudgetPeriod.entries.forEachIndexed { index, period ->
@@ -1026,10 +1162,10 @@ fun ChangePeriodStartDialog(
 
         var selectedDay by remember {
             mutableStateOf(
-                state.settings.periodStart
+                state.appSettings.periodStart
             )
         }
-        when (state.settings.budgetPeriod) {
+        when (state.appSettings.budgetPeriod) {
             BudgetPeriod.MONTH -> {
                 Column(modifier = Modifier.padding(vertical = 8.dp)) {
                     month.chunked(7).forEach { week ->
@@ -1062,7 +1198,7 @@ fun ChangePeriodStartDialog(
                                                             selectedBorderColor
                                                         }
 
-                                                        state.settings.periodStart -> {
+                                                        state.appSettings.periodStart -> {
                                                             previousBorderColor
                                                         }
 
@@ -1087,7 +1223,7 @@ fun ChangePeriodStartDialog(
                                                     selectedTextColor
                                                 }
 
-                                                state.settings.periodStart -> {
+                                                state.appSettings.periodStart -> {
                                                     previousTextColor
                                                 }
 
@@ -1134,7 +1270,7 @@ fun ChangePeriodStartDialog(
                                                     selectedBorderColor
                                                 }
 
-                                                state.settings.periodStart -> {
+                                                state.appSettings.periodStart -> {
                                                     previousBorderColor
                                                 }
 
@@ -1159,7 +1295,7 @@ fun ChangePeriodStartDialog(
                                             selectedTextColor
                                         }
 
-                                        state.settings.periodStart -> {
+                                        state.appSettings.periodStart -> {
                                             previousTextColor
                                         }
 
@@ -1205,5 +1341,5 @@ fun ChangePeriodStartDialog(
 }
 
 private enum class SettingsPage {
-    SETTINGS, CATEGORIES, BUDGET, FEEDBACK
+    SETTINGS, CATEGORIES, BUDGET, FEEDBACK, ACCOUNT
 }
